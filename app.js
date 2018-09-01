@@ -26,18 +26,4 @@ let SharesControl = new SharesController(pool,app);
 let ProfileControl = new ProfileController(pool,app);
 let FavoriteControl = new FavoritesController(pool,app);
 
-
-
-function AddToFriends(user_id,friend_id,callback){
-  pool.query("INSERT INTO friends(user_id,friend_id) VALUES("+user_id+","+friend_id+")",(err,result,fields) => {
-    if(!err){
-      console.log("SUCCESS: ADDED USER TO FRIENDS TABLE")
-      callback()
-    }else{
-      console.log(err)
-      console.log("ERROR: PROBLEM ADDING USER TO FRIENDS")
-    }
-  })
-}
-
 module.exports = app;
