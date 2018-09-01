@@ -18,12 +18,14 @@ let pool = require('./database/Connection');
 let UserController = require('./controllers/Users');
 let SharesController = require('./controllers/Shares');
 let ProfileController = require('./controllers/Profile');
-let FavoritesController = require('./controllers/Favorites')
+let FavoritesController = require('./controllers/Favorites');
+let GroupController = require('./controllers/Groups');
 
 //Initialize our endpoint controllers.
 let UserControl = new UserController(pool,app);
 let SharesControl = new SharesController(pool,app);
 let ProfileControl = new ProfileController(pool,app);
 let FavoriteControl = new FavoritesController(pool,app);
+let GroupControl = new GroupController(pool,app);
 
 module.exports = app;
