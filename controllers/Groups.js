@@ -1,3 +1,5 @@
+var request = require('request');
+
 function GroupController(DatabaseConnection,ExpressApplication){
     this.connection = DatabaseConnection;
     this.app = ExpressApplication;

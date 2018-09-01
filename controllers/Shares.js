@@ -1,3 +1,5 @@
+var request = require('request');
+
 function SharesController(DatabaseConnection,ExpressApplication){
     this.connection = DatabaseConnection;
     this.app = ExpressApplication;
