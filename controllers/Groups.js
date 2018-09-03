@@ -49,7 +49,7 @@ function GroupController(DatabaseConnection,ExpressApplication){
     this.app.post('/group/create',(req,res) => {
         res.set('Content-Type','application/json');
 
-        this.connection.query('insert into groups(creator,title,description) values('+req.body.creator+',`'+req.body.title+'`,`'+req.body.description+'`)',(err,result,fields) => {
+        this.connection.query("insert into groups(creator,title,description) values("+req.body.creator+",'"+req.body.title+"','"+req.body.description+"')",(err,result,fields) => {
             if(!err){
                 res.json({
                     PAYLOAD:result,
@@ -57,6 +57,7 @@ function GroupController(DatabaseConnection,ExpressApplication){
                     TYPE:"SUCCESS"
                 })
             }else{
+                console.log(err)
                 res.json({
                     TYPE:"ERROR",
                     MESSAGE:"FAILED TO CREATE GROUP"
@@ -122,6 +123,55 @@ function GroupController(DatabaseConnection,ExpressApplication){
           res.end();
         })
     });
+
+    this.app.post('/group/friend/send',(req,res) => {
+        res.set('Content-Type','application/json');
+
+        if(req.body.sender_id != req.body.reciever_id){
+            this.connection.query("insert into group_friends(sender_id,reciever_id,group_id) values('"+req.body.sender_id+"','"+req.body.reciever_id+"','"+req.body.group_id+"')",(err,result,fields) => {
+                if(!err){
+                    //Here we are also going to want to send a notification to an invite into a group.
+                    res.json({
+                        TYPE:"SUCCESS",
+                        MESSAGE:"SUCCESFULLY CREATED GROUP INVITE"
+                    })
+                }else{
+                    res.json({
+                        TYPE:"FAILED",
+                        MESSAGE:"FAILED TO CREATE GROUP INVITE"
+                    })
+                }
+            })
+            res.end();
+        }else{
+            res.json({
+                TYPE:"ERROR",
+                MESSAGE:"SENDER AND RECIEVER ID ARE THE SAME"
+            })
+            res.end();
+        }
+    });
+
+    this.app.post('/group/friend/accept',(req,res) => {
+        res.set('Content-Type','application/json')
+
+        this.connection.query('update table',(err,result,fields) => {
+            if(!err){
+                res.json({
+                    TYPE:"SUCCESS",
+                    MESSAGE:"ACCEPTED GROUP REQUEST"
+                })
+            }else{
+                res.json({
+                    TYPE:"ERROR",
+                    MESSAGE:"FAILED TO ACCEPT GROUP REQUEST"
+                })
+            }
+
+            res.end()
+        })
+    })
 }
 
 module.exports = GroupController;
+
