@@ -159,11 +159,13 @@ function UserController(DatabaseConnection,ExpressApp){
               TYPE:"SUCCESS",
               MESSAGE:"LOGGED IN"
             });
+            console.log('working')
           }else{
             res.json({
               TYPE:"FAILURE",
               MESSAGE:"INCORRECT USERNAME OR PASSWORD"
             });
+            console.log('notworking')
           }
         }
 
