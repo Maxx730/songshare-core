@@ -3,8 +3,7 @@ let pool = mysql.createPool({
     connectionLimit:100,
     host:'localhost',
     user:'root',
-    password:'dRmario',
-    database:'songshare'
+    password:'dRmario43'
 });
 
 module.exports = pool;

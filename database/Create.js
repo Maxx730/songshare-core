@@ -3,7 +3,7 @@ function CreationController (DatabaseConntection,ExpressApplication){
     this.app = ExpressApplication;
 
     this.app.use('/database/create',(req,res) => {
-        this.connection.query('CREATE DATABASE IF NOT EXISTS songshare',(err,result,fields) => {
+        this.connection.query('CREATE TABLE IF NOT EXISTS songshare',(err,result,fields) => {
             if(!err) {
                 console.log('database created!')
             }
