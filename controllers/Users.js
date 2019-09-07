@@ -154,6 +154,7 @@ function UserController(DatabaseConnection,ExpressApp){
       this.connection.query("SELECT _id,username FROM users WHERE username='"+req.body.username+"' AND password='"+req.body.password+"'",(err,result,fields) => {
         if(!err){
           if(result.length == 1){
+            console.log('works')
             res.json({
               PAYLOAD:result[0],
               TYPE:"SUCCESS",
@@ -161,11 +162,12 @@ function UserController(DatabaseConnection,ExpressApp){
             });
             console.log('working')
           }else{
+            console.log('does not work')
             res.json({
               TYPE:"FAILURE",
               MESSAGE:"INCORRECT USERNAME OR PASSWORD"
             });
-            console.log('notworking')
+            console.log('notworkingu')
           }
         }
 
