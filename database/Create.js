@@ -6,6 +6,8 @@ function CreationController (DatabaseConntection,ExpressApplication){
         this.connection.query('CREATE TABLE IF NOT EXISTS songshare',(err,result,fields) => {
             if(!err) {
                 console.log('database created!')
+            } else {
+                console.log('there was an error')
             }
         });
     });
