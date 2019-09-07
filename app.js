@@ -21,6 +21,7 @@ let ProfileController = require('./controllers/Profile');
 let FavoritesController = require('./controllers/Favorites');
 let GroupController = require('./controllers/Groups');
 let NotificationController = require('./controllers/Notification');
+let CreationHandler = require('./database/Create');
 
 //Initialize our endpoint controllers.
 let UserControl = new UserController(pool,app);
@@ -29,5 +30,6 @@ let ProfileControl = new ProfileController(pool,app);
 let FavoriteControl = new FavoritesController(pool,app);
 let GroupControl = new GroupController(pool,app);
 let NotificationControl = new NotificationController(app);
+let Creation = new CreationHandler(pool,app);
 
 module.exports = app;
