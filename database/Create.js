@@ -7,7 +7,7 @@ function CreationController (DatabaseConntection,ExpressApplication){
             if(!err) {
                 console.log('database created!')
             } else {
-                console.log('there was an error')
+                console.log(err)
             }
         });
     });
