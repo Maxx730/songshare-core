@@ -27,7 +27,6 @@ function SharesController(DatabaseConnection,ExpressApplication){
 
     this.app.post('/share/create',(req,res) => {
       res.set('Content-Type','application/json');
-      console.log(req)
 
       if(req.body.art != null && typeof req.body.art != "undefined"){
         if(req.body.spotify_id != null && typeof req.body.spotify_id != "undefined"){
