@@ -7,13 +7,19 @@ function CreationController (DatabaseConntection,ExpressApplication){
             if(!err) {
                 this.connection.query('INSERT INTO users(username,password,email) VALUES("maxx730","drmario","max.kinghorn@gmail.com");',(err,result) => {
                     if (!err) {
-                        console.log(result)
+                        this.connection.query('CREATE TABLE IF NOT EXISTS shared(_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,title VARCHAR(100) NOT NULL,artist NOT NULL VARCHAR(100),art NOT NULL VARCHAR(100),time_shared DATETIME NOT NULL,spotify_id VARCHAR(999),youtube_id VARCHAR(999),play_id VARCHAR(999))',(err,result) => {
+                            if(!err) {
+                                console.log(result);
+                            } else {
+                                console.log(err)
+                            }
+                        });
                     } else {
                         console.log(err);
                     }
                 });
             } else {
-                console.log(err)
+                console.log(err);
             }
         });
     });
