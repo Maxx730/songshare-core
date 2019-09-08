@@ -42,6 +42,7 @@ function SharesController(DatabaseConnection,ExpressApplication){
 
       this.connection.query(query,(err,result,fields) => {
         if(!err){
+          console.log('success sharing to database')
           //Send our Firebase notification before sending back the successful response.
           request({
               url: "https://fcm.googleapis.com/fcm/send",
@@ -70,6 +71,7 @@ function SharesController(DatabaseConnection,ExpressApplication){
           MESSAGE:"SHARED SUCCESFUL"
         });
         }else{
+          console.log('error inserting into databse')
           res.json({
             ERROR:err,
             TYPE:"ERROR",

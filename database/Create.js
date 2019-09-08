@@ -24,6 +24,7 @@ function CreationController (DatabaseConntection,ExpressApplication){
         });
     });
 
+    //Deletes all the data in the database and seeds to data for development purposes.
     this.app.use('/database/seed',(req,res) => {
         this.connection.query('DELETE FROM users',(err,result) => {
             if(!err) {
