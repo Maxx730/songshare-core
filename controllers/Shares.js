@@ -30,7 +30,7 @@ function SharesController(DatabaseConnection,ExpressApplication){
 
       if(req.body.art != null && typeof req.body.art != "undefined"){
         if(req.body.spotify_id != null && typeof req.body.spotify_id != "undefined"){
-          query = "INSERT INTO shared(sharer,title,artist,duration,spotify_id,play_id,youtube_id,art) VALUES("+req.body._id+",'"+req.body.title+"','"+req.body.artist+"',0,'"+req.body.spotify_id+"','','','"+req.body.art+"')";
+          query = "INSERT INTO shared(sharer,title,artist,duration,spotify_id,play_id,youtube_id,art,time_shared) VALUES("+req.body._id+",'"+req.body.title+"','"+req.body.artist+"',0,'"+req.body.spotify_id+"','','','"+req.body.art+"',0)";
         }else if(req.body.youtube_id != null && typeof req.body.youtube_id != "undefined"){
           query = "INSERT INTO shared(sharer,title,artist,duration,spotify_id,play_id,youtube_id,art) VALUES("+req.body._id+",'"+req.body.title+"','"+req.body.artist+"',0,'','','"+req.body.youtube_id+"','"+req.body.art+"')";
         }else{
