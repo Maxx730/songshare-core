@@ -27,7 +27,6 @@ function SharesController(DatabaseConnection,ExpressApplication){
 
     this.app.post('/share/create',(req,res) => {
       res.set('Content-Type','application/json');
-      console.log('working')
 
       if(req.body.art != null && typeof req.body.art != "undefined"){
         if(req.body.spotify_id != null && typeof req.body.spotify_id != "undefined"){
@@ -43,7 +42,6 @@ function SharesController(DatabaseConnection,ExpressApplication){
 
       this.connection.query(query,(err,result,fields) => {
         if(!err){
-          console.log('success sharing to database')
           //Send our Firebase notification before sending back the successful response.
           request({
               url: "https://fcm.googleapis.com/fcm/send",
@@ -72,7 +70,7 @@ function SharesController(DatabaseConnection,ExpressApplication){
           MESSAGE:"SHARED SUCCESFUL"
         });
         }else{
-          console.log('error inserting into databse')
+          console.log(err)
           res.json({
             ERROR:err,
             TYPE:"ERROR",
