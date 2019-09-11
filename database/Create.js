@@ -53,10 +53,10 @@ function CreationController (DatabaseConntection,ExpressApplication){
     this.app.use('/database/seed',(req,res) => {
         this.connection.query('DELETE FROM users',(err,result) => {
             if(!err) {
-                this.connection.query('INSERT INTO users(username,password,email) VALUES("maxx730","drmario","max.kinghorn@gmail.com");INSERT INTO users(username,password,email) VALUES("tolm640","drmario","tolm.lamar@gmail.com");INSERT INTO users(username,password,email) VALUES("ethan54","drmario","ethan.clokels@gmail.com");',(err,result) => {
+                this.connection.query('INSERT INTO users(username,password,email) VALUES("maxx730","drmario","max.kinghorn@gmail.com"),("tolm640","drmario","tolm.lamar@gmail.com"),("ethan54","drmario","ethan.clokels@gmail.com");',(err,result) => {
                     if(!err) {
 						console.log('USER DATA SEEDED');
-                        this.connection.query('INSERT INTO friends(0,1,false);INSERT INTO friends(0,2,true);INSERT INTO friends(1,2,false);',(err,result) => {
+                        this.connection.query('INSERT INTO friends(sender,receiver,accepted) VALUES (0,1,false),(0,2,true),(1,2,false);',(err,result) => {
 							if(!err) {
 								console.log('FRIEND DATA SEEDED');
 							} else {
