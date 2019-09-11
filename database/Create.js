@@ -24,7 +24,7 @@ function CreationController (DatabaseConntection,ExpressApplication){
         });
 	});
 	
-	this.app.user('/database/purge',(req,res) => {
+	this.app.use('/database/purge',(req,res) => {
 		this.connection.query('DROP TABLE users',(err,result) => {
 			if(!err) {
 				console.log('USERS TABLE DELETED\n');
