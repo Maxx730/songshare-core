@@ -57,7 +57,7 @@ function CreationController (DatabaseConntection,ExpressApplication){
         this.connection.query('DELETE FROM users', async (err,result) => {
             if(!err) {
 				const hashed = await bcrypt.hash('drmario', 10);
-                this.connection.query('INSERT INTO users(username,password,email) VALUES("maxx730","' + hashed + '","max.kinghorn@gmail.com"),("tolm640","drmario","tolm.lamar@gmail.com"),("ethan54","drmario","ethan.clokels@gmail.com");',(err,result) => {
+                this.connection.query('INSERT INTO users(username,password,email) VALUES("maxx730","' + hashed + '","max.kinghorn@gmail.com"),("tolm640","' + hashed + '","tolm.lamar@gmail.com"),("ethan54","' + hashed + '","ethan.clokels@gmail.com");',(err,result) => {
                     if(!err) {
 						console.log('USER DATA SEEDED');
 						this.connection.query('DELETE FROM friends',(err,result) => {
