@@ -54,7 +54,7 @@ function CreationController (DatabaseConntection,ExpressApplication){
 
     //Deletes all the data in the database and seeds to data for development purposes.
     this.app.use('/database/seed',(req,res) => {
-        this.connection.query('DELETE FROM users',(err,result) => {
+        this.connection.query('DELETE FROM users', async (err,result) => {
             if(!err) {
 				const hashed = await bcrypt.hash('drmario', 10);
                 this.connection.query('INSERT INTO users(username,password,email) VALUES("maxx730","' + hash + '","max.kinghorn@gmail.com"),("tolm640","drmario","tolm.lamar@gmail.com"),("ethan54","drmario","ethan.clokels@gmail.com");',(err,result) => {
