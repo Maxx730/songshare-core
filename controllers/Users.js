@@ -126,7 +126,7 @@ function UserController(DatabaseConnection,ExpressApp){
     this.app.get('/user/:id',(req,res) => {
       res.set('Content-Type','application/json');
 
-      this.connection.query("SELECT username,email,profile FROM users WHERE _id='"+req.params.id+"'",(err,result,fields) => {
+      this.connection.query("SELECT username,email FROM users WHERE _id='"+req.params.id+"'",(err,result,fields) => {
         if(!err){
           res.json(result);
           res.end();
