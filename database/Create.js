@@ -5,7 +5,7 @@ function CreationController (DatabaseConntection,ExpressApplication){
     this.app = ExpressApplication;
 
     this.app.use('/database/create',(req,res) => {
-        this.connection.query('CREATE TABLE IF NOT EXISTS users(_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,username VARCHAR(55) NOT NULL,password VARCHAR(55) NOT NULL,email VARCHAR(55) NOT NULL,logged_in BOOL NOT NULL DEFAULT false,joined TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)',(err,result,fields) => {
+        this.connection.query('CREATE TABLE IF NOT EXISTS users(_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,username VARCHAR(55) NOT NULL,password VARCHAR(550) NOT NULL,email VARCHAR(55) NOT NULL,logged_in BOOL NOT NULL DEFAULT false,joined TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)',(err,result,fields) => {
 			if(!err) {
 				this.connection.query('CREATE TABLE IF NOT EXISTS shared(_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,sharer INT NOT NULL,title VARCHAR(100) NOT NULL,artist VARCHAR(100) NOT NULL,art VARCHAR(100) NOT NULL,time_shared TIMESTAMP DEFAULT CURRENT_TIMESTAMP,duration INT DEFAULT 0,spotify_id VARCHAR(999),youtube_id VARCHAR(999),play_id VARCHAR(999))',(err,result) => {
 					if(!err) {
