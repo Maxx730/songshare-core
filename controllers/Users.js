@@ -162,7 +162,8 @@ function UserController(DatabaseConnection,ExpressApp){
 						STATUS:"SUCCESS",
 						MESSAGE:"USER CREATED"
 					  }
-					)
+					);
+					res.end();
 				  }else{
 					console.log("ERROR CREATING USER")
 				  }
@@ -229,37 +230,6 @@ function UserController(DatabaseConnection,ExpressApp){
             });
         }
     });
-}
-
-UserController.prototype.CheckUserExists = (username,email,password,callback) => {
-  if(typeof username != "undefined" && username != "" && typeof email != "undefined" && email != ""){
-    this.connection.query("SELECT * FROM users WHERE username='"+username+"'",(err,result,fields) => {
-      if(result.length == 0 && !err){
-        this.connection.query("SELECT * FROM users WHERE email='"+email+"'",(err,results,fields) => {
-          if(results.length == 0 && !err){
-            this.connection.query('INSERT INTO users(username,password,email) VALUES("'+username+'","'+password+'","'+email+'")',(err,result,fields) => {
-              if(!err){
-                console.log("USER CREATED")
-                callback(
-                  {
-                    PAYLOAD:result,
-                    STATUS:"SUCCESS",
-                    MESSAGE:"USER CREATED"
-                  }
-                )
-              }else{
-                console.log("ERROR CREATING USER")
-              }
-            })
-          }else{
-            console.log("ERROR CREATING USER")
-          }
-        });
-      }else{
-        console.log("USER ALREADY EXISTS")
-      }
-    })
-  }
 }
 
 module.exports = UserController;
