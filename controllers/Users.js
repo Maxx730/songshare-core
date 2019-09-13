@@ -155,6 +155,8 @@ function UserController(DatabaseConnection,ExpressApp){
 
 	  const hashed = await bcrypt.hash(req.body.password,10);
 
+	  console.log(hashed)
+
       this.connection.query("SELECT _id,username FROM users WHERE username='"+req.body.username+"' AND password='"+hashed+"'",(err,result,fields) => {
         if(!err){
           if(result.length == 1){
