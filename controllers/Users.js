@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+
 function UserController(DatabaseConnection,ExpressApp){
     this.connection = DatabaseConnection;
     this.app = ExpressApp;
@@ -151,7 +153,9 @@ function UserController(DatabaseConnection,ExpressApp){
     this.app.post('/user/login',(req,res) => {
       res.set('Content-Type','application/json');
 
-      this.connection.query("SELECT _id,username FROM users WHERE username='"+req.body.username+"' AND password='"+req.body.password+"'",(err,result,fields) => {
+	  const hashed = await bcrypt.hash(req.body.password,10);
+
+      this.connection.query("SELECT _id,username FROM users WHERE username='"+req.body.username+"' AND password='"+hashed+"'",(err,result,fields) => {
         if(!err){
           if(result.length == 1){
             res.json({
