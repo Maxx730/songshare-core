@@ -142,12 +142,40 @@ function UserController(DatabaseConnection,ExpressApp){
     });
 
     this.app.post('/user/create',(req,res) => {
-      res.set('Content-Type','application/json');
+	  res.set('Content-Type','application/json');
+	  
+	  let username = req.body.username;
+	  let email = req.body.email;
+	  let password = req.body.password;
 
-      this.CheckUserExists(req.body.username,req.body.email,req.body.password,(result) => {
-        res.json(result);
-        res.end();
-      });
+	  if(typeof username != "undefined" && username != "" && typeof email != "undefined" && email != ""){
+		this.connection.query("SELECT * FROM users WHERE username='"+username+"'",(err,result,fields) => {
+		  if(result.length == 0 && !err){
+			this.connection.query("SELECT * FROM users WHERE email='"+email+"'",(err,results,fields) => {
+			  if(results.length == 0 && !err){
+				this.connection.query('INSERT INTO users(username,password,email) VALUES("'+username+'","'+password+'","'+email+'")',(err,result,fields) => {
+				  if(!err){
+					console.log("USER CREATED")
+					res.json(
+					  {
+						PAYLOAD:result,
+						STATUS:"SUCCESS",
+						MESSAGE:"USER CREATED"
+					  }
+					)
+				  }else{
+					console.log("ERROR CREATING USER")
+				  }
+				})
+			  }else{
+				console.log("ERROR CREATING USER")
+			  }
+			});
+		  }else{
+			console.log("USER ALREADY EXISTS")
+		  }
+		})
+	  }
     });
 
     this.app.post('/user/login',async (req,res) => {
