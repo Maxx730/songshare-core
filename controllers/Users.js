@@ -155,20 +155,18 @@ function UserController(DatabaseConnection,ExpressApp){
 	  
 	  this.connection.query("SELECT password FROM users WHERE username='" + req.body.username + "'",(err,result) => {
 		  if(!err) {
-			console.log(result)
+			bcrypt.compare(req.body.password,result[0],(err,res) => {
+				if(!err) {
+					console.log(res);
+				} else {
+					console.log(err);
+				}
+			})
+		
 		  } else {
 			  console.log(err);
 		  }
 	  })
-
-	  bcrypt.compare(req.body.password,'dRmario',(err,res) => {
-		if(!err) {
-			console.log(res);
-		} else {
-			console.log(err);
-		}
-	})
-
       this.connection.query("SELECT _id,username FROM users WHERE username='"+req.body.username+"' AND password='"+'test'+"'",(err,result,fields) => {
         if(!err){
           if(result.length == 1){
