@@ -153,12 +153,26 @@ function UserController(DatabaseConnection,ExpressApp){
     this.app.post('/user/login',async (req,res) => {
 	  res.set('Content-Type','application/json');
 	  
-	  this.connection.query("SELECT password FROM users WHERE username='" + req.body.username + "'",(err,result) => {
+	  this.connection.query("SELECT _id,username,password FROM users WHERE username='" + req.body.username + "'",(err,result) => {
 		  if(!err) {
 			  console.log(result)
 			bcrypt.compare(req.body.password,result[0].password,(err,res) => {
-				if(!err) {
-					console.log(res);
+				if(!err){
+					if(res){
+						res.json({
+							PAYLOAD:{
+								_id: result[0]._id,
+								username: result[0].username
+							},
+							TYPE:"SUCCESS",
+							MESSAGE:"LOGGED IN"
+						});
+					}else{
+						res.json({
+							TYPE:"FAILURE",
+							MESSAGE:"INCORRECT USERNAME OR PASSWORD"
+						});
+					}
 				} else {
 					console.log(err);
 				}
