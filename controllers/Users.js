@@ -153,11 +153,15 @@ function UserController(DatabaseConnection,ExpressApp){
     this.app.post('/user/login',async (req,res) => {
       res.set('Content-Type','application/json');
 
-	  const hashed = await bcrypt.hash(req.body.password,10);
+	  bcrypt.compare(req.body.password,'dRmario',(err,res) => {
+		if(!err) {
+			console.log(res);
+		} else {
+			console.log(err);
+		}
+	})
 
-	  console.log(hashed)
-
-      this.connection.query("SELECT _id,username FROM users WHERE username='"+req.body.username+"' AND password='"+hashed+"'",(err,result,fields) => {
+      this.connection.query("SELECT _id,username FROM users WHERE username='"+req.body.username+"' AND password='"+'test'+"'",(err,result,fields) => {
         if(!err){
           if(result.length == 1){
             res.json({
