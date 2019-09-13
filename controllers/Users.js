@@ -151,7 +151,15 @@ function UserController(DatabaseConnection,ExpressApp){
     });
 
     this.app.post('/user/login',async (req,res) => {
-      res.set('Content-Type','application/json');
+	  res.set('Content-Type','application/json');
+	  
+	  this.connection.query("SELECT password FROM users WHERE username='" + req.body.username + "'",(err,result) => {
+		  if(!err) {
+			console.log(result)
+		  } else {
+			  console.log(err);
+		  }
+	  })
 
 	  bcrypt.compare(req.body.password,'dRmario',(err,res) => {
 		if(!err) {
