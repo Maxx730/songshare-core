@@ -155,10 +155,9 @@ function UserController(DatabaseConnection,ExpressApp){
 	  
 	  this.connection.query("SELECT _id,username,password FROM users WHERE username='" + req.body.username + "'",(err,result) => {
 		  if(!err) {
-			  console.log(result)
-			bcrypt.compare(req.body.password,result[0].password,(err,res) => {
+			bcrypt.compare(req.body.password,result[0].password,(err,bres) => {
 				if(!err){
-					if(res){
+					if(bres){
 						res.json({
 							PAYLOAD:{
 								_id: result[0]._id,
@@ -181,25 +180,7 @@ function UserController(DatabaseConnection,ExpressApp){
 		  } else {
 			  console.log(err);
 		  }
-	  })
-      this.connection.query("SELECT _id,username FROM users WHERE username='"+req.body.username+"' AND password='"+'test'+"'",(err,result,fields) => {
-        if(!err){
-          if(result.length == 1){
-            res.json({
-              PAYLOAD:result[0],
-              TYPE:"SUCCESS",
-              MESSAGE:"LOGGED IN"
-            });
-          }else{
-            res.json({
-              TYPE:"FAILURE",
-              MESSAGE:"INCORRECT USERNAME OR PASSWORD"
-            });
-          }
-        }
-
-        res.end();
-      });
+	  });
     });
 
     this.app.post('/users/find',(req,res) => {
