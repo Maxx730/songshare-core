@@ -150,7 +150,7 @@ function UserController(DatabaseConnection,ExpressApp){
       });
     });
 
-    this.app.post('/user/login',(req,res) => {
+    this.app.post('/user/login',async (req,res) => {
       res.set('Content-Type','application/json');
 
 	  const hashed = await bcrypt.hash(req.body.password,10);
