@@ -144,7 +144,7 @@ function UserController(DatabaseConnection,ExpressApp){
     this.app.post('/user/create',(req,res) => {
       res.set('Content-Type','application/json');
 
-      CheckUserExists(req.body.username,req.body.email,req.body.password,(result) => {
+      this.CheckUserExists(req.body.username,req.body.email,req.body.password,(result) => {
         res.json(result);
         res.end();
       });
