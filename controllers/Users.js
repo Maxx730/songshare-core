@@ -155,6 +155,7 @@ function UserController(DatabaseConnection,ExpressApp){
 	  
 	  this.connection.query("SELECT password FROM users WHERE username='" + req.body.username + "'",(err,result) => {
 		  if(!err) {
+			  console.log(result)
 			bcrypt.compare(req.body.password,result[0],(err,res) => {
 				if(!err) {
 					console.log(res);
