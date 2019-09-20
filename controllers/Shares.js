@@ -85,7 +85,7 @@ function SharesController(DatabaseConnection,ExpressApplication){
     this.app.get('/user/:id/shares',(req,res) => {
       res.set('Content-Type','application/json');
 
-      let query = "select shared._id,shared.title,shared.artist,users.username,shared.art,shared.spotify_id from shared inner join users on shared.sharer=users._id inner join friends on friends.sender=users._id where (friends.sender="+req.params.id+") or (shared.sharer="+req.params.id+") group by(shared._id)";
+      let query = "select shared._id,shared.title,shared.artist,users.username,shared.art,shared.spotify_id from shared inner join users on shared.sharer=users._id";
 
       this.connection.query(query,(err,result,fields) => {
         if(!err){
@@ -96,7 +96,6 @@ function SharesController(DatabaseConnection,ExpressApplication){
           })
           res.end()
         }else{
-		console.log(err)
           res.json({
             TYPE:"ERROR",
             MESSAGE:"ERROR PULLING USER SHARE STREAM"
