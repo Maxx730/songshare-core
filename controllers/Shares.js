@@ -6,7 +6,7 @@ function SharesController(DatabaseConnection,ExpressApplication){
 
     this.app.get('/share/:id',(req,res) => {
       res.set('Content-Type','application/json');
-      this.connection.query("select shared.title,shared.artist,shared.art,users.username,shared.spotify_id as spot_uri from shared inner join users on shared.sharer=users._id where shared._id="+req.params.id,(err,result,fields) => {
+      this.connection.query("select * from shared",(err,result,fields) => {
         if(!err && result.length > 0){
           res.json({
             PAYLOAD:result,
