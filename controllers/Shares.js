@@ -6,7 +6,7 @@ function SharesController(DatabaseConnection,ExpressApplication){
 
     this.app.get('/share/:id',(req,res) => {
       res.set('Content-Type','application/json');
-      this.connection.query("select * from shared",(err,result,fields) => {
+      this.connection.query("select * from shared WHERE sharer=" + req.params.id,(err,result,fields) => {
         if(!err && result.length > 0){
           res.json({
             PAYLOAD:result,
