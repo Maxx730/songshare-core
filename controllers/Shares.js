@@ -6,7 +6,7 @@ function SharesController(DatabaseConnection,ExpressApplication){
 
     this.app.get('/share/:id',(req,res) => {
       res.set('Content-Type','application/json');
-      this.connection.query("select * from shared WHERE sharer=" + req.params.id,(err,result,fields) => {
+      this.connection.query("select shared.title,shared.artist,shared.art,users.username,shared.spotify_id as spot_uri from shared inner join users on shared.sharer=users._id where shared._id="+req.params.id,(err,result,fields) => {
         if(!err && result.length > 0){
           res.json({
             PAYLOAD:result,
@@ -85,7 +85,7 @@ function SharesController(DatabaseConnection,ExpressApplication){
     this.app.get('/user/:id/shares',(req,res) => {
       res.set('Content-Type','application/json');
 
-      let query = "select shared._id,shared.title,shared.artist,users.username,shared.time_shared,shared.art,shared.spotify_id,shared.youtube_id from shared inner join users on shared.sharer=users._id inner join friends on friends.friend_id=users._id where (friends.user_id="+req.params.id+" and shared.youtube_id='') or (shared.sharer="+req.params.id+" and shared.youtube_id='') group by(shared._id) order by(shared.time_shared) desc";
+      let query = "select shared._id,shared.title,shared.artist,users.username,shared.art,shared.spotify_id from shared inner join users on shared.sharer=users._id inner join friends on friends.friend_id=users._id where (friends.user_id="+req.params.id+" and shared.youtube_id='') or (shared.sharer="+req.params.id+" and shared.youtube_id='') group by(shared._id)";
 
       this.connection.query(query,(err,result,fields) => {
         if(!err){
