@@ -85,7 +85,7 @@ function SharesController(DatabaseConnection,ExpressApplication){
     this.app.get('/user/:id/shares',(req,res) => {
       res.set('Content-Type','application/json');
 
-      let query = "select shared._id,shared.title,shared.artist,users.username,shared.art,shared.spotify_id from shared inner join users on shared.sharer=users._id inner join friends on friends.sender=users._id where (friends.sender="+req.params.id+") or (shared.reciever="+req.params.id+") group by(shared._id)";
+      let query = "select shared._id,shared.title,shared.artist,users.username,shared.art,shared.spotify_id from shared inner join users on shared.sharer=users._id inner join friends on friends.sender=users._id where (friends.sender="+req.params.id+") or (shared.receiver="+req.params.id+") group by(shared._id)";
 
       this.connection.query(query,(err,result,fields) => {
         if(!err){
