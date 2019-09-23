@@ -26,6 +26,7 @@ function UserController(DatabaseConnection,ExpressApp){
               MESSAGE:"RETRIEVED FRIENDS"
             })
           }else{
+			  console.log(err)
             res.json({
               TYPE:"ERROR",
               MESSAGE:"FAILED TO RETRIEVE FRIENDS"
