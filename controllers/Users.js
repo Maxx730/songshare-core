@@ -18,7 +18,7 @@ function UserController(DatabaseConnection,ExpressApp){
     this.app.get('/user/:id/friends',(req,res) => {
         res.set('Content-Type','application/json')
 
-        this.connection.query("SELECT * FROM friends INNER JOIN users ON friends.sender=users._id INNER JOIN users ON friends.receiver=users._id WHERE friends.sender="+req.params.id,(err,result,fields) => {
+        this.connection.query("SELECT * FROM friends INNER JOIN users senders ON senders.sender=users._id INNER JOIN users receivers ON receivers.receiver=users._id WHERE friends.sender="+req.params.id,(err,result,fields) => {
           if(!err){
             res.json({
               PAYLOAD:result,
