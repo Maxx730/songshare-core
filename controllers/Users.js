@@ -18,59 +18,35 @@ function UserController(DatabaseConnection,ExpressApp){
     this.app.get('/user/:id/friends',(req,res) => {
         res.set('Content-Type','application/json')
 
-        this.connection.query("SELECT * FROM friends INNER JOIN users u1 ON u1._id=friends.sender INNER JOIN users u2 ON u2._id=friends.receiver",(err,result,fields) => {
+		//First grab our friends that have accepted requests regardless of who the sender of receiver was.
+        this.connection.query("SELECT friends._id,friends.accepted,us.username FROM friends JOIN(SELECT * FROM users WHERE users._id<>" + req.params.id + ") us ON us._id=friends.receiver OR us._id=friends.sender WHERE friends.sender=" + req.params.id + " OR friends.receiver=" + req.params.id,(err,result,fields) => {
           if(!err){
-            res.json({
-              PAYLOAD:result,
-              TYPE:"SUCCESS",
-              MESSAGE:"RETRIEVED FRIENDS"
-            })
+			res.json({
+				PAYLOAD:result,
+				TYPE:"SUCCESS",
+				MESSAGE:"RETRIEVED FRIENDS"
+			});
           }else{
-			  console.log(err)
             res.json({
               TYPE:"ERROR",
               MESSAGE:"FAILED TO RETRIEVE FRIENDS"
-            })
-          }
-          res.end();
+			});
+		  }
+		  res.end();
         })
-    })
-
-    this.app.get('/user/:id/requests',(req,res) => {
-      res.set('Content-Type','application/json')
-
-      this.connection.query("select friend_requests._id as request_id,users.username,users._id,friend_requests.accepted from friend_requests inner join users on friend_requests.sender_id=users._id where friend_requests.reciever_id="+req.params.id+" AND accepted=0",(err,result,fields) => {
-        if(!err){
-          res.json({
-            PAYLOAD:result,
-            TYPE:"SUCCESS",
-            MESSAGE:"RETRIEVED REQUESTS"
-          })
-        }else{
-          res.json({
-            TYPE:"ERROR",
-            MESSAGE:"FAILED TO RETRIEVE REQUESTS"
-          })
-        }
-        res.end();
-      })
-    })
+    });
 
     this.app.post('/user/friend/accept',(req,res) => {
       res.set('Content-Type','application/json')
 
-      this.connection.query("UPDATE friend_requests SET accepted=1 WHERE _id="+req.body.acceptedId,(err,response,fields) => {
+      this.connection.query("UPDATE friends SET accepted=1 WHERE _id="+req.body.id,(err,response,fields) => {
         if(!err){
-          AddToFriends(req.body.user_id,req.body.friend_id, () => {
-            AddToFriends(req.body.friend_id,req.body.user_id,() => {
-              res.json({
-                PAYLOAD:result,
+			res.json({
+                PAYLOAD:response,
                 TYPE:"SUCCESS",
                 MESSAGE:"FRIEND REQUEST ACCEPTED"
-              })
-              res.end()
-            })
-          })
+            });
+            res.end();
         }else{
           res.json({
             TYPE:"ERROR",
@@ -84,7 +60,7 @@ function UserController(DatabaseConnection,ExpressApp){
 
     this.app.post('/user/friend/add',(req,res) => {
       res.set('Content-Type','application/json')
-      this.connection.query("INSERT INTO friend_requests(sender_id,reciever_id) VALUES("+req.body.sender+","+req.body.reciever+")",(err,result,fields) => {
+      this.connection.query("INSERT INTO friends(sender,receiver) VALUES("+req.body.sender+","+req.body.receiver+")",(err,result,fields) => {
         if(!err){
           res.json({
             TYPE:"SUCCESS",
@@ -126,10 +102,11 @@ function UserController(DatabaseConnection,ExpressApp){
       })
     })
 
+	//Returns infomation about a user based on given id.
     this.app.get('/user/:id',(req,res) => {
       res.set('Content-Type','application/json');
 
-      this.connection.query("SELECT username,email,joined FROM users WHERE _id='"+req.params.id+"'",(err,result,fields) => {
+      this.connection.query("SELECT username,email,firstname,lastname,joined FROM users WHERE _id='"+req.params.id+"'",(err,result,fields) => {
         if(!err){
           res.json(result);
           res.end();
@@ -140,23 +117,28 @@ function UserController(DatabaseConnection,ExpressApp){
           })
         }
       });
-    });
+	});
+	
+	//Endpoint for updating user profile based on JSON sent over.
+	this.app.post('/user/:id/update',(req,res) => {
 
-    this.app.post('/user/create',(req,res) => {
+	});
+
+    this.app.post('/user/create', async (req,res) => {
 	  res.set('Content-Type','application/json');
 	  
 	  let username = req.body.username;
 	  let email = req.body.email;
 	  let password = req.body.password;
+	  const hashed = await bcrypt.hash(password, 10);
 
 	  if(typeof username != "undefined" && username != "" && typeof email != "undefined" && email != ""){
 		this.connection.query("SELECT * FROM users WHERE username='"+username+"'",(err,result,fields) => {
 		  if(result.length == 0 && !err){
 			this.connection.query("SELECT * FROM users WHERE email='"+email+"'",(err,results,fields) => {
 			  if(results.length == 0 && !err){
-				this.connection.query('INSERT INTO users(username,password,email) VALUES("'+username+'","'+password+'","'+email+'")',(err,result,fields) => {
+				this.connection.query('INSERT INTO users(username,password,email) VALUES("'+username+'","'+hashed+'","'+email+'")',(err,result,fields) => {
 				  if(!err){
-					console.log("USER CREATED")
 					res.json(
 					  {
 						PAYLOAD:result,
@@ -166,20 +148,39 @@ function UserController(DatabaseConnection,ExpressApp){
 					);
 					res.end();
 				  }else{
-					console.log("ERROR CREATING USER")
+					res.json(
+						{
+						  STATUS:"ERROR",
+						  MESSAGE:"ERROR CREATING USER"
+						}
+					);
+					res.end();
 				  }
 				})
 			  }else{
-				console.log("ERROR CREATING USER")
+				res.json(
+					{
+					  STATUS:"ERROR",
+					  MESSAGE:"ERROR CREATING USER"
+					}
+				);
+				res.end();
 			  }
 			});
 		  }else{
-			console.log("USER ALREADY EXISTS")
+			res.json(
+				{
+				  STATUS:"ERROR",
+				  MESSAGE:"USER ALREADY EXISTS"
+				}
+			);
+			res.end();
 		  }
 		})
 	  }
     });
 
+	//Logs into 
     this.app.post('/user/login',async (req,res) => {
 	  res.set('Content-Type','application/json');
 	  

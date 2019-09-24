@@ -85,7 +85,7 @@ function SharesController(DatabaseConnection,ExpressApplication){
     this.app.get('/user/:id/shares',(req,res) => {
       res.set('Content-Type','application/json');
 
-      let query = "select shared._id,shared.title,shared.artist,users.username,shared.art,shared.spotify_id from shared inner join users on shared.sharer=users._id inner join friends on friends.sender=users._id where (friends.sender="+req.params.id+") or (shared.sharer="+req.params.id+") group by(shared._id)";
+      let query = "SELECT shared._id,shrs.username as sharer,shared.title,shared.artist,shared.art,(SELECT COUNT(*) FROM likes WHERE likes.track_id=shared._id) AS likes FROM  shared JOIN(SELECT frns._id,frns.username FROM friends JOIN(SELECT _id,username FROM users WHERE users._id<>" + req.params.id + ") frns ON frns._id=friends.sender OR frns._id=friends.receiver WHERE friends.sender=" + req.params.id + " OR friends.receiver=" + req.params.id + ") shrs ON shared.sharer=shrs._id";
 
       this.connection.query(query,(err,result,fields) => {
         if(!err){
@@ -103,7 +103,41 @@ function SharesController(DatabaseConnection,ExpressApplication){
           res.end()
         }
       })
-    });
+	});
+	
+	this.app.post('/share/like',(req,res) => {
+		res.set('Content-Type','application/json');
+		this.connection.query('SELECT * FROM likes WHERE track_id=' + req.body.track_id + ' AND user_id=' + req.body.user_id,(err,result) => {
+			if(!err) {
+				if(result.length === 0) {
+					this.connection.query('INSERT INTO likes(track_id,user_id) VALUES(' + req.body.track_id + ',' + req.body.user_id + ')',(err,result) => {
+						if (!err) {
+							res.json({
+								TYPE:"SUCCESS",
+								MESSAGE:"TRACK LIKED"
+							});
+						} else {
+							res.json({
+								TYPE:"ERROR",
+								MESSAGE:"ERROR RECORDING LIKE"
+							});
+						}
+					});
+				} else {
+					res.json({
+						TYPE:"ERROR",
+						MESSAGE:"TRACK ALREADY LIKE BY USER"
+					});
+				}
+			} else {
+				res.json({
+					TYPE:"ERROR",
+					MESSAGE:"ERROR CHECKING LIKES"
+				});
+			}
+		});
+		res.end();
+	});
 }
 
 module.exports = SharesController;
