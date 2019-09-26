@@ -106,7 +106,6 @@ function SharesController(DatabaseConnection,ExpressApplication){
 	});
 	
 	this.app.post('/share/like',(req,res) => {
-		console.log('working')
 		res.set('Content-Type','application/json');
 		this.connection.query('SELECT * FROM likes WHERE track_id=' + req.body.track_id + ' AND user_id=' + req.body.user_id,(err,result) => {
 			if(!err) {
@@ -117,11 +116,13 @@ function SharesController(DatabaseConnection,ExpressApplication){
 								TYPE:"SUCCESS",
 								MESSAGE:"TRACK LIKED"
 							});
+							res.end();
 						} else {
 							res.json({
 								TYPE:"ERROR",
 								MESSAGE:"ERROR RECORDING LIKE"
 							});
+							res.end();
 						}
 					});
 				} else {
@@ -129,15 +130,16 @@ function SharesController(DatabaseConnection,ExpressApplication){
 						TYPE:"ERROR",
 						MESSAGE:"TRACK ALREADY LIKE BY USER"
 					});
+					res.end();
 				}
 			} else {
 				res.json({
 					TYPE:"ERROR",
 					MESSAGE:"ERROR CHECKING LIKES"
 				});
+				res.end();
 			}
 		});
-		res.end();
 	});
 }
 
