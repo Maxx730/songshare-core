@@ -183,7 +183,7 @@ function UserController(DatabaseConnection,ExpressApp){
 	//Logs into 
     this.app.post('/user/login',async (req,res) => {
 	  res.set('Content-Type','application/json');
-	  console.log(req)
+	  console.log(req.body)
 	  
 	  this.connection.query("SELECT _id,username,password FROM users WHERE username='" + req.body.username + "'",(err,result) => {
 		  if(!err) {
