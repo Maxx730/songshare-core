@@ -106,6 +106,7 @@ function SharesController(DatabaseConnection,ExpressApplication){
 	});
 	
 	this.app.post('/share/like',(req,res) => {
+		console.log('working')
 		res.set('Content-Type','application/json');
 		this.connection.query('SELECT * FROM likes WHERE track_id=' + req.body.track_id + ' AND user_id=' + req.body.user_id,(err,result) => {
 			if(!err) {
