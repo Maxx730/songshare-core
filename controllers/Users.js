@@ -183,34 +183,45 @@ function UserController(DatabaseConnection,ExpressApp){
 	//Logs into 
     this.app.post('/user/login',async (req,res) => {
 	  res.set('Content-Type','application/json');
-	  console.log(req.body)
 	  
 	  this.connection.query("SELECT _id,username,password FROM users WHERE username='" + req.body.username + "'",(err,result) => {
 		  if(!err) {
-			bcrypt.compare(req.body.password,result[0].password,(err,bres) => {
-				if(!err){
-					if(bres){
+			  if(result.length > 0) {
+				bcrypt.compare(req.body.password,result[0].password,(err,bres) => {
+					if(!err){
+						if(bres){
+							res.json({
+								PAYLOAD:{
+									_id: result[0]._id,
+									username: result[0].username
+								},
+								TYPE:"SUCCESS",
+								MESSAGE:"LOGGED IN"
+							});
+						}else{
+							res.json({
+								TYPE:"FAILURE",
+								MESSAGE:"INCORRECT USERNAME OR PASSWORD"
+							});
+						}
+					} else {
 						res.json({
-							PAYLOAD:{
-								_id: result[0]._id,
-								username: result[0].username
-							},
-							TYPE:"SUCCESS",
-							MESSAGE:"LOGGED IN"
-						});
-					}else{
-						res.json({
-							TYPE:"FAILURE",
-							MESSAGE:"INCORRECT USERNAME OR PASSWORD"
+							TYPE:"ERROR",
+							MESSAGE:"ERROR GETTING USER DATA"
 						});
 					}
-				} else {
-					console.log(err);
-				}
-			})
-		
+				})
+			  } else {
+				res.json({
+					TYPE:"ERROR",
+					MESSAGE:"USER DOES NOT EXIST"
+				});
+			  }
 		  } else {
-			  console.log(err);
+			res.json({
+				TYPE:"ERROR",
+				MESSAGE:"ERROR CHECKING IF USER EXISTS"
+			});  
 		  }
 	  });
     });
