@@ -109,7 +109,7 @@ function UserController(DatabaseConnection,ExpressApp){
       this.connection.query("SELECT username,email,firstname,lastname,joined FROM users WHERE _id='"+req.params.id+"'",(err,result,fields) => {
         if(!err){
 			res.json({
-				PAYLOAD:response,
+				PAYLOAD:result,
 				TYPE:"SUCCESS",
 				MESSAGE:"USERS ARE FRIENDS"
 			})
