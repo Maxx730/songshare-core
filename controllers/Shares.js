@@ -84,7 +84,7 @@ function SharesController(DatabaseConnection,ExpressApplication){
     this.app.get('/user/:id/shares',(req,res) => {
       res.set('Content-Type','application/json');
 
-      let query = "SELECT shared._id,shrs.username as sharer,shared.title,shared.artist,shared.art,(SELECT COUNT(*) FROM likes WHERE likes.track_id=shared._id) AS likes,(SELECT COUNT(*) FROM likes WHERE likes.track_id=shared._id AND user_id=" + req.params.id + ") AS hasLiked,shared.time_shared AS date FROM  shared JOIN(SELECT frns._id,frns.username FROM friends JOIN(SELECT _id,username FROM users WHERE users._id<>" + req.params.id + ") frns ON frns._id=friends.sender OR frns._id=friends.receiver WHERE friends.sender=" + req.params.id + " OR friends.receiver=" + req.params.id + ") shrs ON shared.sharer=shrs._id";
+      let query = "SELECT shared._id,shrs.username as sharer,shared.title,shared.artist,shared.art,shared.spotify_id,(SELECT COUNT(*) FROM likes WHERE likes.track_id=shared._id) AS likes,(SELECT COUNT(*) FROM likes WHERE likes.track_id=shared._id AND user_id=" + req.params.id + ") AS hasLiked,shared.time_shared AS date FROM  shared JOIN(SELECT frns._id,frns.username FROM friends JOIN(SELECT _id,username FROM users WHERE users._id<>" + req.params.id + ") frns ON frns._id=friends.sender OR frns._id=friends.receiver WHERE friends.sender=" + req.params.id + " OR friends.receiver=" + req.params.id + ") shrs ON shared.sharer=shrs._id";
 
       this.connection.query(query,(err,result,fields) => {
         if(!err){
