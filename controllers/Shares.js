@@ -95,6 +95,7 @@ function SharesController(DatabaseConnection,ExpressApplication){
           })
           res.end()
         }else{
+          console.error("something went wrong");
           res.json({
             TYPE:"ERROR",
             MESSAGE:"ERROR PULLING USER SHARE STREAM"
