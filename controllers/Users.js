@@ -19,7 +19,7 @@ function UserController(DatabaseConnection,ExpressApp){
         res.set('Content-Type','application/json')
 
 		//First grab our friends that have accepted requests regardless of who the sender of receiver was.
-        this.connection.query("SELECT friends._id,friends.accepted,us.username FROM friends JOIN(SELECT * FROM users WHERE users._id<>" + req.params.id + ") us ON us._id=friends.receiver OR us._id=friends.sender WHERE friends.sender=" + req.params.id + " OR friends.receiver=" + req.params.id,(err,result,fields) => {
+        this.connection.query("SELECT friends._id,friends.accepted,us.username,us.profile FROM friends JOIN(SELECT * FROM users WHERE users._id<>" + req.params.id + ") us ON us._id=friends.receiver OR us._id=friends.sender WHERE friends.sender=" + req.params.id + " OR friends.receiver=" + req.params.id,(err,result,fields) => {
           if(!err){
 			res.json({
 				PAYLOAD:result,
@@ -106,7 +106,7 @@ function UserController(DatabaseConnection,ExpressApp){
     this.app.get('/user/:id',(req,res) => {
       res.set('Content-Type','application/json');
 
-      this.connection.query("SELECT username,email,firstname,lastname,joined FROM users WHERE _id='"+req.params.id+"'",(err,result,fields) => {
+      this.connection.query("SELECT username,email,firstname,lastname,joined,profile FROM users WHERE _id='"+req.params.id+"'",(err,result,fields) => {
         if(!err){
 			res.json({
 				PAYLOAD:result,
