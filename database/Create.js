@@ -14,20 +14,44 @@ function CreationController (DatabaseConntection,ExpressApplication){
 								this.connection.query('CREATE TABLE IF NOT EXISTS likes(_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,track_id INT NOT NULL,user_id INT NOT NULL)',(err,result) => {
 									if(!err) {
 										console.log('TABLES CREATED SUCCESSFULLY');
+										res.send({
+											TYPE: 'SUCCESS',
+											MESSAGE: 'SUCCESSFULLY CREATED DATABASE'
+										});
 									} else {
 										console.log(err);
+										res.send({
+											TYPE: 'ERROR',
+											TABLE: 'LIKES',
+											MESSAGE: 'ERROR CREATING DATABASE'
+										});
 									}
 								});
 							} else {
 								console.log(err);
+								res.send({
+									TYPE: 'ERROR',
+									TABLE: 'FRIENDS',
+									MESSAGE: 'ERROR CREATING DATABASE'
+								});
 							}
 						});
 					} else {
 						console.log(err);
+						res.send({
+							TYPE: 'ERROR',
+							TABLE: 'SHARED',
+							MESSAGE: 'ERROR CREATING DATABASE'
+						});
 					}
 				});
 			} else {
 				console.log(err);
+				res.send({
+					TYPE: 'ERROR',
+					TABLE: 'USERS',
+					MESSAGE: 'ERROR CREATING DATABASE'
+				});
 			}
         });
 	});
@@ -43,17 +67,47 @@ function CreationController (DatabaseConntection,ExpressApplication){
 						this.connection.query('DROP TABLE shared',(err,result) => {
 							if(!err) {
 								console.log('SHARED TABLE DELETED');
-								console.log('DATABASE PURGE COMPLETED');
+								this.connection.query('DROP TABLE likes',(err,result) => {
+									if(!err) {
+										console.log('DATABASE PURGE COMPLETED');
+										res.send({
+											TYPE: 'SUCCESS',
+											MESSAGE: 'DATABASE DELETED SUCCESS'
+										});
+									} else {
+										console.log(err);
+										res.send({
+											TYPE: 'ERROR',
+											TABLE: 'LIKES',
+											MESSAGE: 'ERROR DELETING DATABASE'
+										});
+									}
+								});
 							} else {
 								console.log(err);
+								res.send({
+									TYPE: 'ERROR',
+									TABLE: 'SHARED',
+									MESSAGE: 'ERROR DELETING DATABASE'
+								});
 							}
 						});
 					} else {
 						console.log(err);
+						res.send({
+							TYPE: 'ERROR',
+							TABLE: 'FRIENDS',
+							MESSAGE: 'ERROR DELETING DATABASE'
+						});
 					}
 				});
 			} else {
 				console.log(err);
+				res.send({
+					TYPE: 'ERROR',
+					TABLE: 'USERS',
+					MESSAGE: 'ERROR DELETING DATABASE'
+				});
 			}
 		})
 	});
@@ -83,14 +137,29 @@ function CreationController (DatabaseConntection,ExpressApplication){
 																console.log('LIKES SEEDED');
 															} else {
 																console.log(err);
+																res.send({
+																	TYPE: 'ERROR',
+																	TABLE: 'LIKES',
+																	MESSAGE: 'ERROR SEEDING LIKES TABLE'
+																});
 															}
 														});
 													} else {
 														console.log(err);
+														res.send({
+															TYPE: 'ERROR',
+															TABLE: 'SHARED',
+															MESSAGE: 'ERROR SEEDING SHARED TABLE'
+														});
 													}
 												});
 											} else {
 												console.log(err);
+												res.send({
+													TYPE: 'ERROR',
+													TABLE: 'FRIENDS',
+													MESSAGE: 'ERROR SEEDING FRIENDS TABLE'
+												});
 											}
 										});
 									} else {
