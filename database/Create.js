@@ -135,6 +135,10 @@ function CreationController (DatabaseConntection,ExpressApplication){
 														this.connection.query('INSERT INTO likes(track_id,user_id) VALUES(1,1),(2,1),(3,1),(1,6),(2,6)',(err,result) => {
 															if(!err) {
 																console.log('LIKES SEEDED');
+																res.send({
+																	TYPE: 'SUCCESS',
+																	MESSAGE: 'DATABASE SUCCESSFULLY SEEDED'
+																});
 															} else {
 																console.log(err);
 																res.send({
