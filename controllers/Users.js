@@ -1,131 +1,73 @@
 const bcrypt = require('bcrypt');
+var Utils = require('../utils/Utils.js');
 
 function UserController(DatabaseConnection,ExpressApp){
     this.connection = DatabaseConnection;
-    this.app = ExpressApp;
+	this.app = ExpressApp;
+	this.utils = new Utils(this.connection);
 
-    this.app.get('/users',(req,res) => {
-      res.set('Content-Type','application/json');
-
-      this.connection.query("SELECT * FROM users",(err,result,fields) => {
-        if(!err){
-          res.json(result);
-          res.end();
-        }
-      });
-    });
-
-    this.app.get('/user/:id/friends',(req,res) => {
-        res.set('Content-Type','application/json')
-
-		//First grab our friends that have accepted requests regardless of who the sender of receiver was.
-        this.connection.query("SELECT friends._id,friends.accepted,us.username,us.profile FROM friends JOIN(SELECT * FROM users WHERE users._id<>" + req.params.id + ") us ON us._id=friends.receiver OR us._id=friends.sender WHERE friends.sender=" + req.params.id + " OR friends.receiver=" + req.params.id,(err,result,fields) => {
-          if(!err){
-			res.json({
-				PAYLOAD:result,
-				TYPE:"SUCCESS",
-				MESSAGE:"RETRIEVED FRIENDS"
-			});
-          }else{
-            res.json({
-              TYPE:"ERROR",
-              MESSAGE:"FAILED TO RETRIEVE FRIENDS"
-			});
-		  }
+    this.app.get('/users',async (req,res) => {
+	  res.set('Content-Type','application/json');
+	
+	  //Check Credentials
+	 await this.utils.CheckCredentials(req).then((result) => {
+		//If the credentials pass, then we are allowed to display the information.
+		this.connection.query(`SELECT * FROM users`,(err,result,fields) => {
+			if(!err){
+			  res.json(result);
+			  res.end();result
+			}
+		});
+	  }).catch(error => {
+		  res.send(error);
 		  res.end();
-        })
+	  })
     });
-
-    this.app.post('/user/friend/accept',(req,res) => {
-      res.set('Content-Type','application/json')
-
-      this.connection.query("UPDATE friends SET accepted=1 WHERE _id="+req.body.id,(err,response,fields) => {
-        if(!err){
-			res.json({
-                PAYLOAD:response,
-                TYPE:"SUCCESS",
-                MESSAGE:"FRIEND REQUEST ACCEPTED"
-            });
-            res.end();
-        }else{
-          res.json({
-            TYPE:"ERROR",
-            CONTEXT:"UPDATING TO ACCEPTED",
-            MESSAGE:"FAILED TO ACCEPT REQUEST"
-          })
-          res.end();
-        }
-      })
-    })
-
-    this.app.post('/user/friend/add',(req,res) => {
-      res.set('Content-Type','application/json')
-      this.connection.query("INSERT INTO friends(sender,receiver) VALUES("+req.body.sender+","+req.body.receiver+")",(err,result,fields) => {
-        if(!err){
-          res.json({
-            TYPE:"SUCCESS",
-            MESSAGE:"FRIEND REQUEST ADDED"
-          })
-        }else{
-          res.json({
-            TYPE:"ERROR",
-            MESSAGE:"FAILED TO ADD FRIEND REQUEST"
-          })
-        }
-
-        res.end()
-      })
-    })
-
-    this.app.post('/user/friends/check',(req,res) => {
-      res.set('Content-Type','application/json')
-
-      this.connection.query("SELECT * FROM friends WHERE friend_id="+req.body.friend_id+" AND user_id="+req.body.user_id,(err,result,fields) => {
-        if(!err){
-          if(result.length > 0){
-            res.json({
-              TYPE:"TRUE",
-              MESSAGE:"USERS ARE FRIENDS"
-            })
-          }else{
-            res.json({
-              TYPE:"FALSE",
-              MESSAGE:"USERS ARE NOT FRIENDS"
-            })
-          }
-        }else{
-          res.json({
-            TYPE:"ERROR",
-            MESSAGE:"FAILED TO CHECK IF USERS WERE FRIENDS"
-          })
-        }
-      })
-    })
 
 	//Returns infomation about a user based on given id.
     this.app.get('/user/:id',(req,res) => {
-      res.set('Content-Type','application/json');
-
-      this.connection.query("SELECT username,email,firstname,lastname,joined,profile FROM users WHERE _id='"+req.params.id+"'",(err,result,fields) => {
-        if(!err){
-			res.json({
-				PAYLOAD:result,
-				TYPE:"SUCCESS",
-				MESSAGE:"USERS ARE FRIENDS"
-			})
-			res.end();
-        }else{
-          res.json({
-            TYPE:"ERROR",
-            MESSAGE:"ERROR FINDING USER WITH GIVEN ID"
-          })
-        }
-      });
+	  res.set('Content-Type','application/json');
+	  //Check Credentials
+	  this.utils.CheckCredentials(req).then(result => {
+		this.connection.query("SELECT username,email,firstname,lastname,joined,profile FROM users WHERE _id='"+req.params.id+"'",(err,result,fields) => {
+			if(!err){
+				res.json({
+					PAYLOAD:result,
+					TYPE:"SUCCESS",
+					MESSAGE:"USERS FOUND"
+				});
+				res.end();
+			}else{
+			  res.json({
+				TYPE:"ERROR",
+				MESSAGE:"ERROR FINDING USER WITH GIVEN ID"
+			  })
+			}
+		  });
+	  }).catch(error => {
+		res.send(error);
+		res.end();
+	  });
 	});
 	
 	//Endpoint for updating user profile based on JSON sent over.
 	this.app.post('/user/:id/update',(req,res) => {
-
+		this.utils.CheckCredentials(req).then(result => {
+			console.log(req.body)
+			this.utils.CheckAuthorization(req.body.user,{
+				TYPE: 'UPDATE_USER',
+				ACTOR: result
+			}).then(result => {
+				res.send(result);
+				res.end();
+			}).catch(error => {
+				res.send(error);
+				res.end();
+			});
+		}).catch(error => {
+			res.send(error);
+			res.end();
+		});
 	});
 
     this.app.post('/user/create', async (req,res) => {

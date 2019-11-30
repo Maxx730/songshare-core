@@ -20,8 +20,10 @@ let SharesController = require('./controllers/Shares');
 let ProfileController = require('./controllers/Profile');
 let GroupController = require('./controllers/Groups');
 let CreationHandler = require('./database/Create');
+let Authorization = require('./auth/Authorization.js');
 
 //Initialize our endpoint controllers.
+let Authorize = new Authorization(pool,app);
 let UserControl = new UserController(pool,app);
 let SharesControl = new SharesController(pool,app);
 let ProfileControl = new ProfileController(pool,app);
