@@ -21,7 +21,7 @@ function UserController(DatabaseConnection,ExpressApp){
 	  }).catch(error => {
 		  res.send(error);
 		  res.end();
-	  })
+	  });
     });
 
 	//Returns infomation about a user based on given id.
@@ -41,7 +41,7 @@ function UserController(DatabaseConnection,ExpressApp){
 			  res.json({
 				TYPE:"ERROR",
 				MESSAGE:"ERROR FINDING USER WITH GIVEN ID"
-			  })
+			  });
 			}
 		  });
 	  }).catch(error => {
@@ -53,10 +53,9 @@ function UserController(DatabaseConnection,ExpressApp){
 	//Endpoint for updating user profile based on JSON sent over.
 	this.app.post('/user/:id/update',(req,res) => {
 		this.utils.CheckCredentials(req).then(result => {
-			console.log(req.body)
-			this.utils.CheckAuthorization(req.body.user,{
+			this.utils.CheckAuthorization(result,{
 				TYPE: 'UPDATE_USER',
-				ACTOR: result
+				DATA: req.body
 			}).then(result => {
 				res.send(result);
 				res.end();
@@ -70,6 +69,7 @@ function UserController(DatabaseConnection,ExpressApp){
 		});
 	});
 
+	//We dont need to check user credentials here because this is when the user is signing up.
     this.app.post('/user/create', async (req,res) => {
 	  res.set('Content-Type','application/json');
 	  
@@ -126,69 +126,48 @@ function UserController(DatabaseConnection,ExpressApp){
 	  }
     });
 
-	//Logs into 
+	//If the user passes credentials here then thats all we need to sign up.
     this.app.post('/user/login',async (req,res) => {
 	  res.set('Content-Type','application/json');
-	  
-	  this.connection.query("SELECT _id,username,password FROM users WHERE username='" + req.body.username + "'",(err,result) => {
-		  if(!err) {
-			  if(result.length > 0) {
-				bcrypt.compare(req.body.password,result[0].password,(err,bres) => {
-					if(!err){
-						if(bres){
-							res.json({
-								PAYLOAD:{
-									_id: result[0]._id,
-									username: result[0].username
-								},
-								TYPE:"SUCCESS",
-								MESSAGE:"LOGGED IN"
-							});
-						}else{
-							res.json({
-								TYPE:"FAILURE",
-								MESSAGE:"INCORRECT USERNAME OR PASSWORD"
-							});
-						}
-					} else {
-						res.json({
-							TYPE:"ERROR",
-							MESSAGE:"ERROR GETTING USER DATA"
-						});
-					}
-				})
-			  } else {
-				res.json({
-					TYPE:"ERROR",
-					MESSAGE:"USER DOES NOT EXIST"
-				});
-			  }
-		  } else {
-			res.json({
-				TYPE:"ERROR",
-				MESSAGE:"ERROR CHECKING IF USER EXISTS"
-			});  
-		  }
-	  });
+	  res.send('working');
+	  res.end();
     });
 
+	//User needs to pass credentials to find other users to follow.
     this.app.post('/users/find',(req,res) => {
-      res.set('Content-Type','application/json');
-      if(req.body.searchTerm == "" || req.body.searchTerm == " "){
-        res.end();
-      }else{
-            this.connection.query("SELECT _id,username,email FROM users WHERE username LIKE '%"+req.body.searchTerm+"%'",(err,result,fields) => {
-                if(!err){
-                    res.json(result);
-                }else{
-                    res.json({
-                        TYPE:"ERROR",
-                        MESSAGE:"UNABLE TO FIND RESULTS"
-                    })
-                }
-                res.end();
-            });
-        }
+		res.set('Content-Type','application/json');
+		
+		this.utils.CheckCredentials(req).then(result => {
+			//Make sure a username has been sent
+			if(req.body.username) {
+				this.connection.query(`SELECT _id,username,firstname,lastname FROM users WHERE username LIKE '%${req.body.username}%'`,(error,result) => {
+					if(!error) {
+						res.send({
+							TYPE: 'SUCCESS',
+							MESSAGE: 'QUERY FOR USERS SUCCESS',
+							PAYLOAD: result
+						});
+						res.send();
+					} else {
+						console.log(error)
+						res.send({
+							TYPE: 'ERROR',
+							MESSAGE: 'ERROR QUERYING FOR USER'
+						});
+						res.end();
+					}
+				});
+			} else {
+				res.send({
+					TYPE: 'ERROR',
+					MESSAGE: 'USERNAME PARAMETER MISSING'
+				});
+				res.end();
+			}
+		}).catch(error => {
+			res.send(error);
+			res.end();
+		});
     });
 }
 

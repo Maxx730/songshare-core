@@ -56,11 +56,12 @@ Utils.prototype.CheckCredentials = function(request) {
 //User should always be passed as this method should always only be run after checking the credentials of the given user.
 //Action should be a json object describing what the user is attempting to do.
 Utils.prototype.CheckAuthorization = function(user,action) {
+    console.log(user)
     return new Promise((resolve,reject) => {
-        if(action.type !== null) {
-            switch(action.type) {
+        if(action.TYPE) {
+            switch(action.TYPE) {
                 case 'UPDATE_USER':
-                    if(user._id === action.user._id) {
+                    if(user._id === action.DATA._id) {
                         resolve({
                             TYPE: 'SUCCESS',
                             MESSAGE: 'AUTHORIZATION GRANTED'
