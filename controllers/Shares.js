@@ -1,144 +1,68 @@
 var request = require('request');
+var Utils = require('../utils/Utils.js');
 
 function SharesController(DatabaseConnection,ExpressApplication){
     this.connection = DatabaseConnection;
     this.app = ExpressApplication;
+    this.utils = new Utils(DatabaseConnection);
 
     this.app.get('/share/:id',(req,res) => {
       res.set('Content-Type','application/json');
-      this.connection.query("select shared.title,shared.artist,shared.art,users.username,shared.spotify_id as spot_uri from shared inner join users on shared.sharer=users._id where shared._id="+req.params.id,(err,result,fields) => {
-        if(!err && result.length > 0){
-          res.json({
-            PAYLOAD:result,
-            TYPE:"SUCCESS",
-            MESSAGE:"SUCCESFULLY PULL SHARED INFORMATION"
-          })
-          res.end();
-        }else{
-          res.json({
-            ERROR:err,
-            TYPE:"ERROR",
-            MESSAGE:"ERROR PULLING INFO FOR SHARED ID"
-          })
-          res.end()
-        }
-      })
+
+      this.utils.CheckCredentials(req).then(result => {
+        //Any user should be able to see details on any other share, they should not really be 
+        //able to see share details unless they are following someone else.
+        this.connection.query(`SELECT * FROM shared WHERE _id=${req.params.id}`,(err,result) => {
+          if(!err) {
+            res.send({
+              TYPE: 'SUCCESS',
+              MESSAGE: 'SHARE FOUND',
+              PAYLOAD: result
+            });
+            res.end();
+          } else {
+            res.send({
+              TYPE: 'ERROR',
+              MESSAGE: 'ERROR FINDING SHARE'
+            });
+            res.end();
+          }
+        });
+      }).catch(error => {
+        res.send(error);
+        res.end();
+      });
     });
 
     this.app.post('/share/create',(req,res) => {
       res.set('Content-Type','application/json');
-
-      if(req.body.art != null && typeof req.body.art != "undefined"){
-        if(req.body.spotify_id != null && typeof req.body.spotify_id != "undefined"){
-          query = "INSERT INTO shared(sharer,title,artist,duration,spotify_id,play_id,youtube_id,art) VALUES("+req.body._id+",'"+req.body.title.replace(/'/g,"")+"','"+req.body.artist+"',0,'"+req.body.spotify_id+"','','','"+req.body.art+"')";
-        }else if(req.body.youtube_id != null && typeof req.body.youtube_id != "undefined"){
-          query = "INSERT INTO shared(sharer,title,artist,duration,spotify_id,play_id,youtube_id,art) VALUES("+req.body._id+",'"+req.body.title.replace(/'/g,"")+"','"+req.body.artist+"',0,'','','"+req.body.youtube_id+"','"+req.body.art+"')";
-        }else{
-          query = "INSERT INTO shared(sharer,title,artist,duration,spotify_id,play_id,youtube_id,art) VALUES("+req.body._id+",'"+req.body.title.replace(/'/g,"")+"','"+req.body.artist+"',0,'','','','"+req.body.art+"')";
-        }
-      }else{
-        query = "INSERT INTO shared(sharer,title,artist,duration,spotify_id,play_id,youtube_id) VALUES("+req.body._id+",'"+req.body.title.replace(/'/g,"")+"','"+req.body.artist+"',0,'','','')";
-      }
-
-      this.connection.query(query,(err,result,fields) => {
-        if(!err){
-          //Send our Firebase notification before sending back the successful response.
-          request({
-              url: "https://fcm.googleapis.com/fcm/send",
-              method: "POST",
-              json: true,
-              headers: {"Content-Type": "application/json",
-              'Authorization':'key=AAAAitUVliE:APA91bHfJg19h6PdsgU8tXkiMgUbr902EoxwZdllnq_iCVCgNjc4HxiEW1ke6xrepWdISeKZriw8jBUT7CPHp0OUmP-iQAfslnUuF6XJtGC2WxkwXggKG4HHNHZnX7FLl1tG9l1Px1hz'
-              },
-              body: {
-                "to":"/topics/all",
-                "content_available":true,
-                "notification":{
-                  "title":req.body.username+" shared a Track!",
-                  "body":req.body.title+" by "+req.body.artist
-                }
-              },
-          },function (error, response, body) {
-                if (!error && response.statusCode == 200) {
-
-                }
-            }
-        );
-
-        res.json({
-          TYPE:"SUCCESS",
-          MESSAGE:"SHARED SUCCESFUL"
-        });
-        }else{
-          res.json({
-            ERROR:err,
-            TYPE:"ERROR",
-            MESSAGE:"ERROR SHARING MEDIA"
-          })
-        }
-
-        res.end();
-      })
     });
 
+    //Only the logged in user is allowed to see their shared stream.
     this.app.get('/user/:id/shares',(req,res) => {
       res.set('Content-Type','application/json');
 
-      let query = "SELECT shared._id,shrs.username as sharer,shrs.profile as profile,shared.title,shared.artist,shared.art,shared.spotify_id,(SELECT COUNT(*) FROM likes WHERE likes.track_id=shared._id) AS likes,(SELECT COUNT(*) FROM likes WHERE likes.track_id=shared._id AND user_id=" + req.params.id + ") AS hasLiked,shared.time_shared AS date FROM  shared JOIN(SELECT frns._id,frns.username,frns.profile FROM friends JOIN(SELECT _id,username,profile FROM users WHERE users._id<>" + req.params.id + ") frns ON frns._id=friends.sender OR frns._id=friends.receiver WHERE friends.sender=1 OR friends.receiver=" + req.params.id + ") shrs ON shared.sharer=shrs._id ORDER BY date DESC";
+      this.utils.CheckCredentials(req).then(result => {
+        this.utils.CheckAuthorization(result,{
+          TYPE: 'USER_SHARES',
+          DATA: req.body
+        }).then(result => {
+          //Once we have been granted permission, we now make the query to the database.
+          this.connection.query(``,(err,result) => {
+            if(!err) {
 
-      this.connection.query(query,(err,result,fields) => {
-        if(!err){
-          res.json({
-            PAYLOAD:result,
-            TYPE:"SUCCESS",
-            MESSAGE:"PULLED USER SHARE STREAM"
-          })
-          res.end()
-        }else{
-          res.json({
-            TYPE:"ERROR",
-            MESSAGE:"ERROR PULLING USER SHARE STREAM"
-          })
-          res.end()
-        }
-      })
-	});
-	
-	this.app.post('/share/like',(req,res) => {
-		res.set('Content-Type','application/json');
-		this.connection.query('SELECT * FROM likes WHERE track_id=' + req.body.track_id + ' AND user_id=' + req.body.user_id,(err,result) => {
-			if(!err) {
-				if(result.length === 0) {
-					this.connection.query('INSERT INTO likes(track_id,user_id) VALUES(' + req.body.track_id + ',' + req.body.user_id + ')',(err,result) => {
-						if (!err) {
-							res.json({
-								TYPE:"SUCCESS",
-								MESSAGE:"TRACK LIKED"
-							});
-							res.end();
-						} else {
-							res.json({
-								TYPE:"ERROR",
-								MESSAGE:"ERROR RECORDING LIKE"
-							});
-							res.end();
-						}
-					});
-				} else {
-					res.json({
-						TYPE:"ERROR",
-						MESSAGE:"TRACK ALREADY LIKE BY USER"
-					});
-					res.end();
-				}
-			} else {
-				res.json({
-					TYPE:"ERROR",
-					MESSAGE:"ERROR CHECKING LIKES"
-				});
-				res.end();
-			}
-		});
+            } else {
+
+            }
+          });
+        }).catch(error => {
+          res.send(error);
+          res.end();
+        });
+      }).catch(error => {
+        res.send(error);
+        res.end();
+      });
 	});
 }
 

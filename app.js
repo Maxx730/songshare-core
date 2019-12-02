@@ -17,8 +17,6 @@ app.use(cors());
 let pool = require('./database/Connection');
 let UserController = require('./controllers/Users');
 let SharesController = require('./controllers/Shares');
-let ProfileController = require('./controllers/Profile');
-let GroupController = require('./controllers/Groups');
 let CreationHandler = require('./database/Create');
 let Authorization = require('./auth/Authorization.js');
 
@@ -26,8 +24,6 @@ let Authorization = require('./auth/Authorization.js');
 let Authorize = new Authorization(pool,app);
 let UserControl = new UserController(pool,app);
 let SharesControl = new SharesController(pool,app);
-let ProfileControl = new ProfileController(pool,app);
-let GroupControl = new GroupController(pool,app);
 let Creation = new CreationHandler(pool,app);
 
 module.exports = app;

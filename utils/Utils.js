@@ -60,7 +60,7 @@ Utils.prototype.CheckAuthorization = function(user,action) {
     return new Promise((resolve,reject) => {
         if(action.TYPE) {
             switch(action.TYPE) {
-                case 'UPDATE_USER':
+                case 'UPDATE_USER' || 'USER_SHARES':
                     if(user._id === action.DATA._id) {
                         resolve({
                             TYPE: 'SUCCESS',

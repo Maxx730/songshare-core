@@ -25,10 +25,10 @@ function UserController(DatabaseConnection,ExpressApp){
     });
 
 	//Returns infomation about a user based on given id.
-    this.app.get('/user/:id',(req,res) => {
+    this.app.get('/user/:id',async (req,res) => {
 	  res.set('Content-Type','application/json');
 	  //Check Credentials
-	  this.utils.CheckCredentials(req).then(result => {
+	  await this.utils.CheckCredentials(req).then(result => {
 		this.connection.query("SELECT username,email,firstname,lastname,joined,profile FROM users WHERE _id='"+req.params.id+"'",(err,result,fields) => {
 			if(!err){
 				res.json({
@@ -51,8 +51,8 @@ function UserController(DatabaseConnection,ExpressApp){
 	});
 	
 	//Endpoint for updating user profile based on JSON sent over.
-	this.app.post('/user/:id/update',(req,res) => {
-		this.utils.CheckCredentials(req).then(result => {
+	this.app.post('/user/:id/update',async (req,res) => {
+		await this.utils.CheckCredentials(req).then(result => {
 			this.utils.CheckAuthorization(result,{
 				TYPE: 'UPDATE_USER',
 				DATA: req.body
@@ -129,15 +129,31 @@ function UserController(DatabaseConnection,ExpressApp){
 	//If the user passes credentials here then thats all we need to sign up.
     this.app.post('/user/login',async (req,res) => {
 	  res.set('Content-Type','application/json');
-	  res.send('working');
+	  
+	  await this.utils.CheckCredentials(req).then(result => {
+		//Send back the pertinent information that should be saved into the application, i.e do not send back the 
+		//password hash.
+		res.send({
+			_id: result._id,
+			username: result.username,
+			firstname: result.firstname,
+			lastname: result.lastname,
+			email: result.email
+		});
+		res.end();
+	  }).catch(error => {
+		  res.send(error);
+		  res.end();
+	  });
+
 	  res.end();
     });
 
 	//User needs to pass credentials to find other users to follow.
-    this.app.post('/users/find',(req,res) => {
+    this.app.post('/users/find',async (req,res) => {
 		res.set('Content-Type','application/json');
 		
-		this.utils.CheckCredentials(req).then(result => {
+		await this.utils.CheckCredentials(req).then(result => {
 			//Make sure a username has been sent
 			if(req.body.username) {
 				this.connection.query(`SELECT _id,username,firstname,lastname FROM users WHERE username LIKE '%${req.body.username}%'`,(error,result) => {
