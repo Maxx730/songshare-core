@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 
 function CreationController (DatabaseConntection,ExpressApplication){
+    console.log('STARTING CREATION CONTROLLER');
     this.connection = DatabaseConntection;
     this.app = ExpressApplication;
 
@@ -33,7 +34,7 @@ function CreationController (DatabaseConntection,ExpressApplication){
 			}
         });
 	});
-	
+
 	//DELETES ALL THE TABLES FROM THE DATABASE
 	this.app.use('/database/purge',(req,res) => {
 		this.connection.query('DROP TABLE users',(err,result) => {
