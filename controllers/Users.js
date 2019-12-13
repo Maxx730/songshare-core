@@ -7,7 +7,7 @@ this.connection = DatabaseConnection;
 	this.utils = new Utils(this.connection);
 
     this.app.get('/users',async (req,res) => {
-			console.log(req)
+			console.log(req.headers)
 	  res.set('Content-Type','application/json');
 
 	  //Check Credentials
