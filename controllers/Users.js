@@ -2,20 +2,20 @@ const bcrypt = require('bcrypt');
 var Utils = require('../utils/Utils.js');
 
 function UserController(DatabaseConnection,ExpressApp){
-    this.connection = DatabaseConnection;
+this.connection = DatabaseConnection;
 	this.app = ExpressApp;
 	this.utils = new Utils(this.connection);
 
     this.app.get('/users',async (req,res) => {
 	  res.set('Content-Type','application/json');
-	
+
 	  //Check Credentials
 	 await this.utils.CheckCredentials(req).then((result) => {
 		//If the credentials pass, then we are allowed to display the information.
 		this.connection.query(`SELECT * FROM users`,(err,result,fields) => {
 			if(!err){
 			  res.json(result);
-			  res.end();result
+			  res.end();
 			}
 		});
 	  }).catch(error => {
@@ -49,7 +49,7 @@ function UserController(DatabaseConnection,ExpressApp){
 		res.end();
 	  });
 	});
-	
+
 	//Endpoint for updating user profile based on JSON sent over.
 	this.app.post('/user/:id/update',async (req,res) => {
 		await this.utils.CheckCredentials(req).then(result => {
@@ -72,7 +72,7 @@ function UserController(DatabaseConnection,ExpressApp){
 	//We dont need to check user credentials here because this is when the user is signing up.
     this.app.post('/user/create', async (req,res) => {
 	  res.set('Content-Type','application/json');
-	  
+
 	  let username = req.body.username;
 	  let email = req.body.email;
 	  let password = req.body.password;
@@ -129,9 +129,9 @@ function UserController(DatabaseConnection,ExpressApp){
 	//If the user passes credentials here then thats all we need to sign up.
     this.app.post('/user/login',async (req,res) => {
 	  res.set('Content-Type','application/json');
-	  
+
 	  await this.utils.CheckCredentials(req).then(result => {
-		//Send back the pertinent information that should be saved into the application, i.e do not send back the 
+		//Send back the pertinent information that should be saved into the application, i.e do not send back the
 		//password hash.
 		res.send({
 			_id: result._id,
@@ -152,7 +152,7 @@ function UserController(DatabaseConnection,ExpressApp){
 	//User needs to pass credentials to find other users to follow.
     this.app.post('/users/find',async (req,res) => {
 		res.set('Content-Type','application/json');
-		
+
 		await this.utils.CheckCredentials(req).then(result => {
 			//Make sure a username has been sent
 			if(req.body.username) {

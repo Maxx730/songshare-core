@@ -6,6 +6,7 @@ function Utils(database) {
 
 //Checks whether or not the user actually exists in the database and they have given the right username and password.
 Utils.prototype.CheckCredentials = function(request) {
+  console.log(request)
     return new Promise(async (resolve,reject) => {
         //Remove the Basic keyword from the authorization header.
         const b64auth = (request.headers.authorization || '').split(' ')[1] || '';
@@ -13,7 +14,7 @@ Utils.prototype.CheckCredentials = function(request) {
         const credentials = new Buffer(b64auth, 'base64').toString().split(':');
         this.connection.query(`SELECT * FROM users WHERE username='${credentials[0]}'`,async (err,result) => {
             if(!err) {
-                //Once we have the user, we want to compare the bcrypt hash to the users 
+                //Once we have the user, we want to compare the bcrypt hash to the users
                 //provided password.
                 if(result.length > 0) {
                     //Compare the passwords.
@@ -48,7 +49,7 @@ Utils.prototype.CheckCredentials = function(request) {
                     MESSAGE: 'ERROR ACCESSING DATABASE'
                 });
             }
-        }); 
+        });
     });
 }
 
@@ -56,7 +57,6 @@ Utils.prototype.CheckCredentials = function(request) {
 //User should always be passed as this method should always only be run after checking the credentials of the given user.
 //Action should be a json object describing what the user is attempting to do.
 Utils.prototype.CheckAuthorization = function(user,action) {
-    console.log(user)
     return new Promise((resolve,reject) => {
         if(action.TYPE) {
             switch(action.TYPE) {
@@ -74,7 +74,7 @@ Utils.prototype.CheckAuthorization = function(user,action) {
                     }
                 break;
                 default:
-    
+
                 break;
             }
         } else {
