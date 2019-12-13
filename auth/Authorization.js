@@ -17,6 +17,7 @@ function Authorization(Database,Application) {
         },
         unauthorizedResponse: (req) => {
             console.log(req.headers)
+            console.log(req.authorization)
             return "Authorization Credentials Required";
         }
     }));
