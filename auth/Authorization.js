@@ -15,7 +15,8 @@ function Authorization(Database,Application) {
             //Check the database for a user with the given password.
             return true;
         },
-        unauthorizedResponse: () => {
+        unauthorizedResponse: (req) => {
+            console.log(req)
             return "Authorization Credentials Required";
         }
     }));
