@@ -6,7 +6,6 @@ function Utils(database) {
 
 //Checks whether or not the user actually exists in the database and they have given the right username and password.
 Utils.prototype.CheckCredentials = function(request) {
-  console.log(request)
     return new Promise(async (resolve,reject) => {
         //Remove the Basic keyword from the authorization header.
         const b64auth = (request.headers.authorization || '').split(' ')[1] || '';
