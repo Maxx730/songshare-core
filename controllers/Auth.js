@@ -23,4 +23,4 @@ function AuthController(DatabaseConnection,ExpressApplication){
     });
 }
 
-module.exports = UserController;
+module.exports = AuthController;
