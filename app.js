@@ -26,6 +26,6 @@ let Authorize = new Authorization(pool,app);
 let UserControl = new UserController(pool,app);
 let SharesControl = new SharesController(pool,app);
 let Creation = new CreationHandler(pool,app);
-let AuthEndpointService = new CreationHandler(pool,app);
+let AuthEndpointService = new AuthEndpoint(pool,app);
 
 module.exports = app;
