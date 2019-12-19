@@ -18,10 +18,10 @@ this.connection = DatabaseConnection;
 			  res.end();
 			}
 		});
-	  }).catch(error => {
-		  res.send(error);
-		  res.end();
-	  });
+		  }).catch(error => {
+			  res.send(error);
+			  res.end();
+		  });
     });
 
 	//Returns infomation about a user based on given id.
@@ -128,25 +128,25 @@ this.connection = DatabaseConnection;
 
 	//If the user passes credentials here then thats all we need to sign up.
     this.app.post('/user/login',async (req,res) => {
-	  res.set('Content-Type','application/json');
+		  res.set('Content-Type','application/json');
 
-	  await this.utils.CheckCredentials(req).then(result => {
-		//Send back the pertinent information that should be saved into the application, i.e do not send back the
-		//password hash.
-		res.send({
-			_id: result._id,
-			username: result.username,
-			firstname: result.firstname,
-			lastname: result.lastname,
-			email: result.email
-		});
-		res.end();
-	  }).catch(error => {
-		  res.send(error);
+		  await this.utils.CheckCredentials(req).then(result => {
+			//Send back the pertinent information that should be saved into the application, i.e do not send back the
+			//password hash.
+			res.send({
+				_id: result._id,
+				username: result.username,
+				firstname: result.firstname,
+				lastname: result.lastname,
+				email: result.email
+			});
+			res.end();
+		  }).catch(error => {
+			  res.send(error);
+			  res.end();
+		  });
+
 		  res.end();
-	  });
-
-	  res.end();
     });
 
 	//User needs to pass credentials to find other users to follow.
