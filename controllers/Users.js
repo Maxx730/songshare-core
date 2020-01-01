@@ -151,7 +151,7 @@ function UserController(DatabaseConnection,ExpressApp){
 			});
 		});
 
-		this.get.use('/notify/:id', async (req,res) => {
+		this.app.get('/notify/:id', async (req,res) => {
 			res.set('Content-Type','application/json');
 
 			await this.utils.CheckCredentials(req).then((result) => {
