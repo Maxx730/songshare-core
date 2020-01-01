@@ -72,7 +72,7 @@ function CreationController (DatabaseConntection,ExpressApplication){
     this.app.use('/database/seed',async (req,res) => {
 		await bcrypt.hash('drmario', 10,(err,hash) => {
 			if(!err) {
-				this.connection.query('INSERT INTO users(username,password,email,firstname,lastname) VALUES("maxx730","' + hash + '","max.kinghorn@gmail.com","Max","Kinghorn"),("tolm640","' + hash + '","tolm.lamar@gmail.com","Tom","Lamar"),("ethan54","' + hash + '","ethan.clokels@gmail.com","Ethan","Clokey");',(err,result) => {
+				this.connection.query('INSERT INTO users(username,password,email,firstname,lastname,notif_token) VALUES("maxx730","' + hash + '","max.kinghorn@gmail.com","Max","Kinghorn",""),("tolm640","' + hash + '","tolm.lamar@gmail.com","Tom","Lamar",""),("ethan54","' + hash + '","ethan.clokels@gmail.com","Ethan","Clokey","");',(err,result) => {
 					if(!err) {
 						this.connection.query('INSERT INTO shared(sharer,title,artist,art,spotify_id) VALUES(2,"TEST 1","ARTIST 1","ART 1","SPOTIFY_ID_1"),(2,"TEST 2","ARTIST 2","ART 2","SPOTIFY_ID_2"),(1,"TEST 3","ARTIST 3","ART 3","SPOTIFY_ID_3"),(1,"TEST 4","ARTIST 4","ART 4","SPOTIFY_ID_4"),(3,"TEST 5","ARTIST 5","ART 5","SPOTIFY_ID_5"),(1,"TEST 6","ARTIST 6","ART 6","SPOTIFY_ID_6")',(err,result) => {
 							if(!err) {
