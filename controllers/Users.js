@@ -127,7 +127,7 @@ function UserController(DatabaseConnection,ExpressApp){
     });
 
 		//Sets the given user's notification token.
-		this.app.post('/notification', async (req,res) => {
+		this.app.use('/notification', async (req,res) => {
 			res.set('Content-Type','application/json');
 
 			console.log(req);
