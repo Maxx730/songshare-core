@@ -9,8 +9,6 @@ let body = require('body-parser');
 let cors = require('cors');
 var request = require('request');
 app.use(cookieParser());
-app.use(body.urlencoded({extended:true}));
-app.use(body.json());
 app.use(cors());
 
 //Import our different modules so we can create the end point controllers.
