@@ -138,6 +138,7 @@ function UserController(DatabaseConnection,ExpressApp){
 					});
 					res.end();
 				} else {
+					console.log(err);
 					res.send({
 						STATUS: "ERROR",
 						MESSAGE: "ERROR ADDING TOKEN"
