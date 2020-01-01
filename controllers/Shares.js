@@ -6,33 +6,33 @@ function SharesController(DatabaseConnection,ExpressApplication){
     this.app = ExpressApplication;
     this.utils = new Utils(DatabaseConnection);
 
-    this.app.get('/share/:id',(req,res) => {
-      res.set('Content-Type','application/json');
-
-      this.utils.CheckCredentials(req).then(result => {
-        //Any user should be able to see details on any other share, they should not really be
-        //able to see share details unless they are following someone else.
-        this.connection.query(`SELECT * FROM shared WHERE _id=${req.params.id}`,(err,result) => {
-          if(!err) {
-            res.send({
-              TYPE: 'SUCCESS',
-              MESSAGE: 'SHARE FOUND',
-              PAYLOAD: result
-            });
-            res.end();
-          } else {
-            res.send({
-              TYPE: 'ERROR',
-              MESSAGE: 'ERROR FINDING SHARE'
-            });
-            res.end();
-          }
-        });
-      }).catch(error => {
-        res.send(error);
-        res.end();
-      });
-    });
+    // this.app.get('/share/:id',(req,res) => {
+    //   res.set('Content-Type','application/json');
+    //
+    //   this.utils.CheckCredentials(req).then(result => {
+    //     //Any user should be able to see details on any other share, they should not really be
+    //     //able to see share details unless they are following someone else.
+    //     this.connection.query(`SELECT * FROM shared WHERE _id=${req.params.id}`,(err,result) => {
+    //       if(!err) {
+    //         res.send({
+    //           TYPE: 'SUCCESS',
+    //           MESSAGE: 'SHARE FOUND',
+    //           PAYLOAD: result
+    //         });
+    //         res.end();
+    //       } else {
+    //         res.send({
+    //           TYPE: 'ERROR',
+    //           MESSAGE: 'ERROR FINDING SHARE'
+    //         });
+    //         res.end();
+    //       }
+    //     });
+    //   }).catch(error => {
+    //     res.send(error);
+    //     res.end();
+    //   });
+    // });
 
     this.app.post('/share/create',(req,res) => {
       res.set('Content-Type','application/json');
