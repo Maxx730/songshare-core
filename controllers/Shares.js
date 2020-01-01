@@ -10,7 +10,7 @@ function SharesController(DatabaseConnection,ExpressApplication){
       res.set('Content-Type','application/json');
 
       this.utils.CheckCredentials(req).then(result => {
-        //Any user should be able to see details on any other share, they should not really be 
+        //Any user should be able to see details on any other share, they should not really be
         //able to see share details unless they are following someone else.
         this.connection.query(`SELECT * FROM shared WHERE _id=${req.params.id}`,(err,result) => {
           if(!err) {
@@ -36,6 +36,7 @@ function SharesController(DatabaseConnection,ExpressApplication){
 
     this.app.post('/share/create',(req,res) => {
       res.set('Content-Type','application/json');
+      console.log(req.body)
     });
 
     //Only the logged in user is allowed to see their shared stream.
