@@ -1,10 +1,12 @@
 const bcrypt = require('bcrypt');
 var Utils = require('../utils/Utils.js');
+const Notification = require('../lib/NotificationManager.js');
 
 function UserController(DatabaseConnection,ExpressApp){
 	this.connection = DatabaseConnection;
 	this.app = ExpressApp;
 	this.utils = new Utils(this.connection);
+	this.notify = new NotificationManager();
 
   this.app.get('/users',async (req,res) => {
 	  res.set('Content-Type','application/json');
@@ -142,6 +144,29 @@ function UserController(DatabaseConnection,ExpressApp){
 						res.json({
 							STATUS: "ERROR",
 							MESSAGE: "ERROR ADDING TOKEN"
+						});
+						res.end();
+					}
+				});
+			});
+		});
+
+		this.get.use('/notify/:id', async (req,res) => {
+			res.set('Content-Type','application/json');
+
+			await this.utils.CheckCredentials(req).then((result) => {
+				this.connection.query(`SELECT notif_token FROM users WHERE _id=${req.params.id}`,(err,result) => {
+					if(!err) {
+						console.log(result)
+						res.json({
+							STATUS: "SUCCESS",
+							MESSAGE: "NOTIFIED"
+						});
+						res.end();
+					} else {
+						res.json({
+							STATUS: "ERROR",
+							MESSAGE: "ERROR NOTIFYING"
 						});
 						res.end();
 					}

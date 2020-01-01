@@ -36,7 +36,10 @@ function SharesController(DatabaseConnection,ExpressApplication){
 
     this.app.post('/share/create',(req,res) => {
       res.set('Content-Type','application/json');
-      console.log(req.body)
+
+      this.utils.CheckCredentials(req).then(result => {
+        
+      });
     });
 
     //Only the logged in user is allowed to see their shared stream.
