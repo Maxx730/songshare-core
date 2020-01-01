@@ -131,7 +131,7 @@ function UserController(DatabaseConnection,ExpressApp){
 			res.set('Content-Type','application/json');
 
 			await this.utils.CheckCredentials(req).then((result) => {
-				console.log(result)
+				console.log(req.body)
 				this.connection.query(`UPDATE users SET notif_token='${req.body.token}' WHERE _id=${req.body.id}`,(err,result) => {
 					if(!err) {
 						res.json({
