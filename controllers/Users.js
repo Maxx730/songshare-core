@@ -130,6 +130,8 @@ function UserController(DatabaseConnection,ExpressApp){
 		this.app.post('/notification', async (req,res) => {
 			res.set('Content-Type','application/json');
 
+			console.log(req);
+
 			this.connection.query(`UPDATE users SET notif_token='${req.body.token}' WHERE _id=${req.body.id}`,(err,result) => {
 				if(!err) {
 					res.json({
