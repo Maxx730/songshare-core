@@ -130,23 +130,24 @@ function UserController(DatabaseConnection,ExpressApp){
 		this.app.use('/notification', async (req,res) => {
 			res.set('Content-Type','application/json');
 
-			console.log(req);
-
-			this.connection.query(`UPDATE users SET notif_token='${req.body.token}' WHERE _id=${req.body.id}`,(err,result) => {
-				if(!err) {
-					res.json({
-						STATUS: "SUCCESS",
-						MESSAGE: "ADDED NOTIFICATION TOKEN"
-					});
-					res.end();
-				} else {
-					res.json({
-						STATUS: "ERROR",
-						MESSAGE: "ERROR ADDING TOKEN"
-					});
-					res.end();
-				}
-			})
+			await this.utils.CheckCredentials(req).then((result) => {
+				console.log(result)
+				this.connection.query(`UPDATE users SET notif_token='${req.body.token}' WHERE _id=${req.body.id}`,(err,result) => {
+					if(!err) {
+						res.json({
+							STATUS: "SUCCESS",
+							MESSAGE: "ADDED NOTIFICATION TOKEN"
+						});
+						res.end();
+					} else {
+						res.json({
+							STATUS: "ERROR",
+							MESSAGE: "ERROR ADDING TOKEN"
+						});
+						res.end();
+					}
+				});
+			});
 		});
 
 	//If the user passes credentials here then thats all we need to sign up.
