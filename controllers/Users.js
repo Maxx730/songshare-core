@@ -126,6 +126,27 @@ this.connection = DatabaseConnection;
 	  }
     });
 
+		//Sets the given user's notification token.
+		this.app.post('/user/notif_token', async (req,res) => {
+			res.set('Content-Type','application/json');
+
+			this.connection.query(`UPDATE user SET notif_token='${req.body.token}' WHERE _id=${req.body.id}`,(err,result) => {
+				if(!err) {
+					res.send({
+						STATUS: "SUCCESS",
+						MESSAGE: "ADDED NOTIFICATION TOKEN"
+					});
+					res.end();
+				} else {
+					res.send({
+						STATUS: "ERROR",
+						MESSAGE: "ERROR ADDING TOKEN"
+					});
+					res.end();
+				}
+			})
+		});
+
 	//If the user passes credentials here then thats all we need to sign up.
     this.app.post('/user/login',async (req,res) => {
 		  res.set('Content-Type','application/json');
