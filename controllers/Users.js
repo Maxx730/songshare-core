@@ -157,7 +157,7 @@ function UserController(DatabaseConnection,ExpressApp){
 			await this.utils.CheckCredentials(req).then((result) => {
 				this.connection.query(`SELECT notif_token FROM users WHERE _id=${req.params.id}`,(err,result) => {
 					if(!err) {
-						console.log(result)
+						this.notify.Notify(result[0].notif_token);
 						res.json({
 							STATUS: "SUCCESS",
 							MESSAGE: "NOTIFIED"
