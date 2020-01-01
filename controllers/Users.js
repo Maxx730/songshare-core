@@ -132,14 +132,14 @@ function UserController(DatabaseConnection,ExpressApp){
 
 			this.connection.query(`UPDATE users SET notif_token='${req.body.token}' WHERE _id=${req.body.id}`,(err,result) => {
 				if(!err) {
-					res.send({
+					res.json({
 						STATUS: "SUCCESS",
 						MESSAGE: "ADDED NOTIFICATION TOKEN"
 					});
 					res.end();
 				} else {
 					console.log(err);
-					res.send({
+					res.json({
 						STATUS: "ERROR",
 						MESSAGE: "ERROR ADDING TOKEN"
 					});
