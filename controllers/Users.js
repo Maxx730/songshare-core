@@ -6,7 +6,7 @@ function UserController(DatabaseConnection,ExpressApp){
 	this.connection = DatabaseConnection;
 	this.app = ExpressApp;
 	this.utils = new Utils(this.connection);
-	this.notify = new NotificationManager();
+	this.notify = new Notification();
 
   this.app.get('/users',async (req,res) => {
 	  res.set('Content-Type','application/json');
