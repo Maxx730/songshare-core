@@ -7,22 +7,22 @@ function UserController(DatabaseConnection,ExpressApp){
 	this.utils = new Utils(this.connection);
 
   this.app.get('/users',async (req,res) => {
-	  res.set('Content-Type','application/json');
+	 res.set('Content-Type','application/json');
 
-	  //Check Credentials
+	 //Check Credentials
 	 await this.utils.CheckCredentials(req).then((result) => {
-		//If the credentials pass, then we are allowed to display the information.
-		this.connection.query(`SELECT * FROM users`,(err,result,fields) => {
-			if(!err){
-			  res.json(result);
-			  res.end();
-			}
-		});
-		  }).catch(error => {
+				//If the credentials pass, then we are allowed to display the information.
+				this.connection.query(`SELECT * FROM users`,(err,result,fields) => {
+					if(!err){
+					  res.json(result);
+					  res.end();
+					}
+				});
+		}).catch(error => {
 			  res.send(error);
 			  res.end();
-		  });
-    });
+		 });
+  });
 
 	//Returns infomation about a user based on given id.
   this.app.get('/user/:id',async (req,res) => {
@@ -128,6 +128,7 @@ function UserController(DatabaseConnection,ExpressApp){
 
 		//Sets the given user's notification token.
 		this.app.post('/notification', async (req,res) => {
+			console.log('working')
 			res.set('Content-Type','application/json');
 
 			await this.utils.CheckCredentials(req).then((result) => {
