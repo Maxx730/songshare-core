@@ -11,7 +11,7 @@ function AuthController(DatabaseConnection,ExpressApplication){
     //So when a user is new and needs to authorize Spotify to user our application, we need
     //to send back information about our application, this should only happen AFTER a user hash
     //created an account.
-    this.app.use('/authorize',async (req,res) => {
+    this.app.get('/authorize',async (req,res) => {
       res.set('Content-Type','application/json');
       //Check user Credentials
       await this.utils.CheckCredentials(req).then((result) => {
