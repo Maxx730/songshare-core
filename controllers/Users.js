@@ -2,11 +2,11 @@ const bcrypt = require('bcrypt');
 var Utils = require('../utils/Utils.js');
 
 function UserController(DatabaseConnection,ExpressApp){
-this.connection = DatabaseConnection;
+	this.connection = DatabaseConnection;
 	this.app = ExpressApp;
 	this.utils = new Utils(this.connection);
 
-    this.app.get('/users',async (req,res) => {
+  this.app.get('/users',async (req,res) => {
 	  res.set('Content-Type','application/json');
 
 	  //Check Credentials
@@ -25,7 +25,7 @@ this.connection = DatabaseConnection;
     });
 
 	//Returns infomation about a user based on given id.
-    this.app.get('/user/:id',async (req,res) => {
+  this.app.get('/user/:id',async (req,res) => {
 	  res.set('Content-Type','application/json');
 	  //Check Credentials
 	  await this.utils.CheckCredentials(req).then(result => {
@@ -34,7 +34,7 @@ this.connection = DatabaseConnection;
 				res.json({
 					PAYLOAD:result,
 					TYPE:"SUCCESS",
-					MESSAGE:"USERS FOUND"
+					MESSAGE:"USER FOUND"
 				});
 				res.end();
 			}else{
@@ -70,7 +70,7 @@ this.connection = DatabaseConnection;
 	});
 
 	//We dont need to check user credentials here because this is when the user is signing up.
-    this.app.post('/user/create', async (req,res) => {
+  this.app.post('/user/create', async (req,res) => {
 	  res.set('Content-Type','application/json');
 
 	  let username = req.body.username;
@@ -127,7 +127,7 @@ this.connection = DatabaseConnection;
     });
 
 		//Sets the given user's notification token.
-		this.app.post('/user/notif_token', async (req,res) => {
+		this.app.post('/notification', async (req,res) => {
 			res.set('Content-Type','application/json');
 
 			this.connection.query(`UPDATE user SET notif_token='${req.body.token}' WHERE _id=${req.body.id}`,(err,result) => {
