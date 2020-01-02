@@ -85,7 +85,7 @@ function CreationController (DatabaseConntection,ExpressApplication){
 					if(!err) {
 						this.connection.query('INSERT INTO shared(sharer,title,artist,art,spotify_id) VALUES(2,"TEST 1","ARTIST 1","ART 1","SPOTIFY_ID_1"),(2,"TEST 2","ARTIST 2","ART 2","SPOTIFY_ID_2"),(1,"TEST 3","ARTIST 3","ART 3","SPOTIFY_ID_3"),(1,"TEST 4","ARTIST 4","ART 4","SPOTIFY_ID_4"),(3,"TEST 5","ARTIST 5","ART 5","SPOTIFY_ID_5"),(1,"TEST 6","ARTIST 6","ART 6","SPOTIFY_ID_6");',(err,result) => {
 							if(!err) {
-                this.connection.query('INSERT INTO followers(follower,following) VALUES(1,2),(1,3)(2,1);',(err,result) => {
+                this.connection.query('INSERT INTO followers(follower,following) VALUES(1,2),(1,3),(2,1);',(err,result) => {
                   if(!err) {
                     res.send({
                       TYPE: 'SUCCESS',
