@@ -92,6 +92,7 @@ function CreationController (DatabaseConntection,ExpressApplication){
                       MESSAGE: 'DATABASE SUCCESSFULLY SEEDED'
                     });
                   } else  {
+                    console.log(err);
                     res.send({
                       TYPE: 'ERROR',
                       TABLE: 'SHARED',
