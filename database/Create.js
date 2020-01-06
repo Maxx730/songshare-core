@@ -13,6 +13,7 @@ function CreationController (DatabaseConntection,ExpressApplication){
 					if(!err) {
             this.connection.query(`CREATE TABLE IF NOT EXISTS followers(_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,follower INT NOT NULL,following INT NOT NULL)`,(err,result) => {
               if(!err) {
+                this.connection.query(`CREATE TABLE IF NOT EXISTS settings(_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,user INT NOT NULL,defaultUserSearch BOOL NOT NULL DEFAULT false,theme VARCHAR(255) NOT NULL DEFAULT 'grape')`)
                 res.send({
                   TYPE: 'SUCCESS',
                   MESSAGE: 'SUCCESSFULLY CREATED DATABASE'

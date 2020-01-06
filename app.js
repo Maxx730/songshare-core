@@ -18,6 +18,7 @@ let SharesController = require('./controllers/Shares');
 let CreationHandler = require('./database/Create');
 let Authorization = require('./auth/Authorization.js');
 let AuthEndpoint = require('./controllers/Auth.js');
+let SettingsController = require('./controllers/Settings.js');
 
 //Initialize our endpoint controllers.
 let Authorize = new Authorization(pool,app);
@@ -25,5 +26,6 @@ let UserControl = new UserController(pool,app);
 let SharesControl = new SharesController(pool,app);
 let Creation = new CreationHandler(pool,app);
 let AuthEndpointService = new AuthEndpoint(pool,app);
+let Settings = new SettingsController(pool,app);
 
 module.exports = app;
