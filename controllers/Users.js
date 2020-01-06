@@ -204,7 +204,7 @@ function UserController(DatabaseConnection,ExpressApp){
 			await this.utils.CheckCredentials(req).then(result => {
 				//Make sure a username has been sent
 				if(req.body.username) {
-					this.connection.query(`SELECT users._id,users.username,users.firstname,users.lastname,(SELECT COUNT(*) FROM followers WHERE followers.following=users._id AND followers.follower=${req.body.id}) AS following FROM users WHERE users._id <> ${req.body.id} AND users.username LIKE '%${req.body.username}%';`,(error,result) => {
+					this.connection.query(`SELECT users._id,users.username,users.firstname,users.lastname,(SELECT COUNT(*) FROM followers WHERE followers.following=users._id AND followers.follower=${result._id}) AS following FROM users WHERE users._id <> ${result._id} AND users.username LIKE '%${req.body.username}%';`,(error,result) => {
 						if(!error) {
 							res.send({
 								TYPE: 'SUCCESS',
