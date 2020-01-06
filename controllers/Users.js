@@ -238,7 +238,7 @@ function UserController(DatabaseConnection,ExpressApp){
 			res.set('Content-Type','application/json');
 
 			await this.utils.CheckCredentials(req).then(result => {
-				this.connection.query(`INSERT INTO followers(follower,following) VALUES(${req.body.follower},${req.body.following})`,(err,res) => {
+				this.connection.query(`INSERT INTO followers(follower,following) VALUES(${result._id},${req.params.id})`,(err,res) => {
 					if(!err) {
 						res.send({
 							TYPE: 'SUCCESS',
