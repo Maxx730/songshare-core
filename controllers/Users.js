@@ -199,40 +199,61 @@ function UserController(DatabaseConnection,ExpressApp){
 
 	//User needs to pass credentials to find other users to follow.
     this.app.post('/users/find',async (req,res) => {
-		res.set('Content-Type','application/json');
+			res.set('Content-Type','application/json');
 
-		await this.utils.CheckCredentials(req).then(result => {
-			//Make sure a username has been sent
-			if(req.body.username) {
-				this.connection.query(`SELECT _id,username,firstname,lastname FROM users WHERE username LIKE '%${req.body.username}%'`,(error,result) => {
-					if(!error) {
+			await this.utils.CheckCredentials(req).then(result => {
+				//Make sure a username has been sent
+				if(req.body.username) {
+					this.connection.query(`SELECT users._id,users.username,users.firstname,users.lastname,(SELECT COUNT(*) FROM followers WHERE followers.following=users._id AND followers.follower=${req.body.id}) AS following FROM users WHERE users._id <> ${req.body.id} AND users.username LIKE '%${req.body.username}%';`,(error,result) => {
+						if(!error) {
+							res.send({
+								TYPE: 'SUCCESS',
+								MESSAGE: 'QUERY FOR USERS SUCCESS',
+								PAYLOAD: result
+							});
+							res.send();
+						} else {
+							console.log(error)
+							res.send({
+								TYPE: 'ERROR',
+								MESSAGE: 'ERROR QUERYING FOR USER'
+							});
+							res.end();
+						}
+					});
+				} else {
+					res.send({
+						TYPE: 'ERROR',
+						MESSAGE: 'USERNAME PARAMETER MISSING'
+					});
+					res.end();
+				}
+			}).catch(error => {
+				res.send(error);
+				res.end();
+			});
+    });
+
+		this.app.post('/user/follow/:id',async (req,res) => {
+			res.set('Content-Type','application/json');
+
+			await this.utils.CheckCredentials(req).then(result => {
+				this.connection.query(`INSERT INTO followers(follower,following) VALUES(${req.body.follower},${req.body.following})`,(err,res) => {
+					if(!err) {
 						res.send({
 							TYPE: 'SUCCESS',
-							MESSAGE: 'QUERY FOR USERS SUCCESS',
-							PAYLOAD: result
-						});
-						res.send();
+							MESSAGE: 'FOLLOWED USER'
+						})
 					} else {
-						console.log(error)
 						res.send({
 							TYPE: 'ERROR',
-							MESSAGE: 'ERROR QUERYING FOR USER'
+							MESSAGE: 'ERROR FOLLOWING USER'
 						});
 						res.end();
 					}
 				});
-			} else {
-				res.send({
-					TYPE: 'ERROR',
-					MESSAGE: 'USERNAME PARAMETER MISSING'
-				});
-				res.end();
-			}
-		}).catch(error => {
-			res.send(error);
-			res.end();
+			});
 		});
-    });
 }
 
 module.exports = UserController;

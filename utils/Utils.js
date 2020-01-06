@@ -43,6 +43,7 @@ Utils.prototype.CheckCredentials = function(request) {
                     });
                 }
             } else {
+              console.log(err)
                 reject({
                     TYPE: 'ERROR',
                     MESSAGE: 'ERROR ACCESSING DATABASE'
