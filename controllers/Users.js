@@ -240,6 +240,12 @@ function UserController(DatabaseConnection,ExpressApp){
 			await this.utils.CheckCredentials(req).then(result => {
 				this.connection.query(`INSERT INTO followers(follower,following) VALUES(${result._id},${req.params.id})`,(err,results) => {
 					if(!err) {
+						this.connection.query(`SELECT notif_token FROM users WHERE _id=${req.params.id}`,(err,result) => {
+							if(!err && result[0].notif_token !== '') {
+								this.notify.Notify(result[0].notif_token);
+							}
+						});
+
 						res.json({
 							TYPE: 'SUCCESS',
 							MESSAGE: 'FOLLOWED USER'
