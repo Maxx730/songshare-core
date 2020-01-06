@@ -234,18 +234,20 @@ function UserController(DatabaseConnection,ExpressApp){
 			});
     });
 
-		this.app.post('/user/follow/:id',async (req,res) => {
+		this.app.get('/user/follow/:id',async (req,res) => {
 			res.set('Content-Type','application/json');
 
 			await this.utils.CheckCredentials(req).then(result => {
-				this.connection.query(`INSERT INTO followers(follower,following) VALUES(${result._id},${req.params.id})`,(err,res) => {
+				this.connection.query(`INSERT INTO followers(follower,following) VALUES(${result._id},${req.params.id})`,(err,results) => {
 					if(!err) {
-						res.send({
+						res.json({
 							TYPE: 'SUCCESS',
 							MESSAGE: 'FOLLOWED USER'
-						})
+						});
+						res.end();
 					} else {
-						res.send({
+						console.log(err);
+						res.json({
 							TYPE: 'ERROR',
 							MESSAGE: 'ERROR FOLLOWING USER'
 						});
