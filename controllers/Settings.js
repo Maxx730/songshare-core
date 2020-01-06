@@ -20,7 +20,7 @@ function SettingsController(DatabaseConnection,ExpressApp){
           } else {
             this.connection.query(`INSERT INTO settings(user) VALUES(${result._id})`,(err,settings) => {
               if(!err) {
-                this.connection.query(`SELECT * FROM settings WHERE user=${result._id}`,(err,payload) => {
+                this.connection.query(`SELECT defaultUserSearch,theme FROM settings WHERE user=${result._id}`,(err,payload) => {
                   res.send({
                     TYPE: 'SUCCESS',
                     PAYLOAD: payload,
