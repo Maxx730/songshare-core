@@ -8,7 +8,7 @@ function SettingsController(DatabaseConnection,ExpressApp){
   this.app.get('/settings',async (req,res) => {
     await this.utils.CheckCredentials(req).then((result) => {
       //Check if the user has settings or not yet, if not create the default settings.
-      this.connection.query(`SELECT * FROM settings WHERE user=${result._id}`,(err,results) => {
+      this.connection.query(`SELECT defaultUserSearch,theme FROM settings WHERE user=${result._id}`,(err,results) => {
         if(!err) {
           if(results.length > 0){
             res.send({
